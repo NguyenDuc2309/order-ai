@@ -140,7 +140,7 @@ UI Message: "Mình tìm thấy các loại Coca sau, bạn muốn lấy loại n
 {
 "id": "coca_15l_chai",
 "name": "Coca Cola 1.5L Chai PET",
-"quantity_to_add": 1
+"quantity": 1
 }
 ],
 "message": "Đã tìm thấy sản phẩm chính xác."

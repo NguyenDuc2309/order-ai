@@ -10,14 +10,14 @@ from dataclasses import dataclass
 from pathlib import Path
 
 # Use port 9199 as confirmed by the user
-API_URL = os.getenv("BENCHMARK_API_URL", "http://localhost:9199/api/v1/search/product")
+API_URL = os.getenv("API_URL", "http://localhost:9199/api/v1/search/product")
 OUTPUT_DIR = Path("reports")
-CSV_PATH = OUTPUT_DIR / "benchmark_results.csv"
-MD_PATH = OUTPUT_DIR / "benchmark_report.md"
+CSV_PATH = OUTPUT_DIR / "testcase_results.csv"
+MD_PATH = OUTPUT_DIR / "testcase_report.md"
 
 
 @dataclass
-class BenchmarkRow:
+class TestcaseRow:
     idx: int
     prompt: str
     latency_ms: float
@@ -41,7 +41,7 @@ PROMPTS = [
 
 
 def call_api(prompt: str) -> tuple[dict, int]:
-    payload = json.dumps({"query": prompt, "user_id": "benchmark"}).encode("utf-8")
+    payload = json.dumps({"query": prompt, "user_id": "testcase"}).encode("utf-8")
     req = urllib.request.Request(
         API_URL,
         data=payload,
@@ -55,9 +55,9 @@ def call_api(prompt: str) -> tuple[dict, int]:
 
 def run() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    rows: list[BenchmarkRow] = []
+    rows: list[TestcaseRow] = []
 
-    print(f"Starting benchmark with {len(PROMPTS)} prompts on {API_URL}...")
+    print(f"Running {len(PROMPTS)} testcases on {API_URL}...")
 
     for idx, prompt in enumerate(PROMPTS, start=1):
         start = time.perf_counter()
@@ -67,7 +67,7 @@ def run() -> None:
             items = response.get("items", [])
             top_items_str = ", ".join([f"{it.get('name')} (S:{it.get('score', 0)})" for it in items[:3]])
             rows.append(
-                BenchmarkRow(
+                TestcaseRow(
                     idx=idx,
                     prompt=prompt,
                     latency_ms=round(elapsed, 2),
@@ -86,7 +86,7 @@ def run() -> None:
             elapsed = (time.perf_counter() - start) * 1000
             body = exc.read().decode("utf-8", errors="ignore")
             rows.append(
-                BenchmarkRow(
+                TestcaseRow(
                     idx=idx,
                     prompt=prompt,
                     latency_ms=round(elapsed, 2),
@@ -104,7 +104,7 @@ def run() -> None:
         except Exception as exc:  # noqa: BLE001
             elapsed = (time.perf_counter() - start) * 1000
             rows.append(
-                BenchmarkRow(
+                TestcaseRow(
                     idx=idx,
                     prompt=prompt,
                     latency_ms=round(elapsed, 2),
@@ -126,7 +126,7 @@ def run() -> None:
     print(f"Saved Markdown report to {MD_PATH}")
 
 
-def write_csv(rows: list[BenchmarkRow]) -> None:
+def write_csv(rows: list[TestcaseRow]) -> None:
     with CSV_PATH.open("w", encoding="utf-8", newline="") as fp:
         writer = csv.writer(fp)
         writer.writerow(
@@ -162,13 +162,13 @@ def write_csv(rows: list[BenchmarkRow]) -> None:
             )
 
 
-def write_markdown(rows: list[BenchmarkRow]) -> None:
+def write_markdown(rows: list[TestcaseRow]) -> None:
     total = len(rows)
     passed = sum(1 for row in rows if row.ok)
     avg_latency = round(sum(row.latency_ms for row in rows) / total, 2) if rows else 0.0
 
     lines = [
-        f"# Benchmark Report ({total} Prompts)",
+        f"# Testcase Report ({total} Prompts)",
         "",
         f"- Total prompts: {total}",
         f"- HTTP 200 count: {passed}",

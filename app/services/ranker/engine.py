@@ -56,13 +56,19 @@ class RankingEngine:
             
         confidence = round(min(0.99, max(0.01, confidence)), 2)
         
-        # 3. Decision Logic (Scenario A vs B)
-        # Condition: Clear winner (>100 score or large gap) + constraints met
+        # 3. Decision Logic - BACKEND CONFIDENCE DRIVEN
+        # Backend score/gap overrides LLM extraction flags
+        # Exact match criteria:
+        # - High confidence (>= 0.85) 
+        # - Clear winner (gap > 20 for matched constraints, or gap > 40 otherwise)
+        # - All constraints matched
+        
+        gap_threshold = 20 if matches_all_constraints else 40
+        
         is_exact = (
-            extracted.is_exact_request 
-            and matches_all_constraints 
-            and (top_score > 80 or gap > 30)
-            and confidence >= 0.9
+            confidence >= 0.85 and 
+            gap > gap_threshold and
+            matches_all_constraints
         )
 
         if is_exact:
@@ -74,7 +80,7 @@ class RankingEngine:
                     SearchItem(
                         id=top_1["product"]["id"],
                         name=top_1["product"]["name"],
-                        quantity_to_add=extracted.quantity,
+                        quantity=extracted.quantity,
                         score=top_score,
                     )
                 ],
@@ -92,7 +98,7 @@ class RankingEngine:
                     id=r["product"]["id"], 
                     name=r["product"]["name"], 
                     score=r["score"],
-                    quantity_to_add=extracted.quantity # Support quantity here too
+                    quantity=extracted.quantity # Support quantity here too
                 ) for r in choices
             ],
             message="Mình tìm thấy vài lựa chọn gần nhất, bạn chọn giúp mình sản phẩm phù hợp nhé.",

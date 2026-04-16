@@ -6,7 +6,7 @@ from pydantic import BaseModel
 class SearchItem(BaseModel):
     id: str
     name: str
-    quantity_to_add: int | None = None
+    quantity: int | None = None
     score: float | None = None
 
 
