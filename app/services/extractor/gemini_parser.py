@@ -15,24 +15,23 @@ class GeminiParser(BaseExtractor):
     def extract(self, query: str) -> ExtractionResult:
         text = normalize_text(query)
         raw = self.gemini_client.generate_json(self.system_prompt, text)
-        raw = self._normalize_raw(raw)
+        raw = self._normalize_raw(raw, fallback_name=text)
         result = ExtractionResult(**raw)
-        # Apply normalization/defaults
         return apply_defaults(result)
 
-    def _normalize_raw(self, raw: dict | list) -> dict:
+    def _normalize_raw(self, raw: dict | list, fallback_name: str = "") -> dict:
         if isinstance(raw, dict):
             return raw
         if isinstance(raw, list):
             for item in raw:
                 if isinstance(item, dict):
                     return item
-        return self._fallback_extract()
+        return self._fallback_extract(fallback_name)
 
-    def _fallback_extract(self) -> dict:
-        # Safe fallback to avoid 500 when LLM returns invalid shape.
+    def _fallback_extract(self, query_text: str = "") -> dict:
+        # Use the raw query as product_name so ES can still attempt BM25 search.
         return {
-            "product_name": "Coca Cola",
+            "product_name": query_text.strip() or "",
             "quantity": 1,
             "unit_raw": None,
             "size_value": None,

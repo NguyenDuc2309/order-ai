@@ -1,8 +1,10 @@
 import re
 
 SYNONYM_MAP = {
+    # Slang / brand aliases
     "bò húc": "red bull",
     "bo huc": "red bull",
+    # Generic category terms → normalized English for BM25 + extraction
     "nước suối": "water",
     "nuoc suoi": "water",
     "sữa tươi": "milk",
@@ -10,10 +12,8 @@ SYNONYM_MAP = {
     "nước ngọt": "soft drink",
     "nuoc ngot": "soft drink",
     "bia": "beer",
-    "hộp": "hop",
-    "thùng": "thung",
-    "lốc": "loc",
-    "két": "ket",
+    # NOTE: packaging units (thùng, hộp, lốc, két) are intentionally NOT mapped here.
+    # They must be preserved in Vietnamese so Gemini can extract unit_raw correctly.
 }
 
 def normalize_query_text(text: str) -> str:

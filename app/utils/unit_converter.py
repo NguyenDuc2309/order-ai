@@ -1,10 +1,7 @@
 PACK_CONVERSIONS = {
     "thùng": {"unit": "lon", "count": 24},
-    "thung": {"unit": "lon", "count": 24},
     "két": {"unit": "chai", "count": 24},
-    "ket": {"unit": "lon", "count": 24},
     "lốc": {"unit": "lon", "count": 6},
-    "loc": {"unit": "lon", "count": 6},
 }
 
 
@@ -17,21 +14,25 @@ def value_to_ml(value: float, unit: str | None) -> float:
 
 
 def normalize_unit(unit_raw: str | None) -> str | None:
+    """Normalize packaging/container units (thùng, lốc, lon, chai…)."""
     if not unit_raw:
         return None
     unit = unit_raw.strip().lower()
-    
-    # 1. Pack conversions
     if unit in PACK_CONVERSIONS:
         return PACK_CONVERSIONS[unit]["unit"]
-        
-    # 2. Basic unit normalization
-    if unit in {"lít", "lit", "l"}:
-        return "l"
-    if unit in {"mililit", "ml"}:
-        return "ml"
-        
     return unit
+
+
+def normalize_size_unit(size_unit: str | None) -> str | None:
+    """Normalize volume units only (l, ml). Never maps packaging terms."""
+    if not size_unit:
+        return None
+    u = size_unit.strip().lower()
+    if u in {"lít", "lit", "l", "liter", "litre"}:
+        return "l"
+    if u in {"ml", "mililit", "milliliter", "mililít"}:
+        return "ml"
+    return u
 
 
 def pack_count(unit_raw: str | None) -> int:

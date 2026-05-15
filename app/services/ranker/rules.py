@@ -1,11 +1,11 @@
 from app.models.extraction import ExtractionResult
-from app.utils.unit_converter import normalize_unit, value_to_ml
+from app.utils.unit_converter import normalize_size_unit, normalize_unit, value_to_ml
 
 
 def apply_defaults(extracted: ExtractionResult) -> ExtractionResult:
-    # 1. Normalize units
-    extracted.unit_raw = normalize_unit(extracted.unit_raw)
-    extracted.size_unit = normalize_unit(extracted.size_unit)
+    # 1. Normalize units — use dedicated functions to avoid cross-contamination
+    extracted.unit_raw = normalize_unit(extracted.unit_raw)     # packaging: thùng→lon
+    extracted.size_unit = normalize_size_unit(extracted.size_unit)  # volume: lít→l, ml→ml
 
     # 2. Size Hint calculation
     if extracted.size_hint is None and extracted.size_value is not None and extracted.size_unit is not None:

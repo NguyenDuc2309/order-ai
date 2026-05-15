@@ -1,4 +1,5 @@
 import logging
+import re
 from app.models.extraction import ExtractionResult
 from app.utils.unit_converter import value_to_ml
 
@@ -35,7 +36,10 @@ class ScoringRanker:
             
             # 3. Size & Unit Match (Hard Rule)
             size_match = self.size_match(product, extraction)
-            unit_match = (not extraction.unit_raw) or (product.get("packaging") == extraction.unit_raw)
+            # Both sides normalized via normalize_unit → compare lowercase for safety
+            unit_match = (not extraction.unit_raw) or (
+                str(product.get("packaging", "")).lower() == extraction.unit_raw.lower()
+            )
             
             if (extraction.size_value or extraction.size_hint):
                 if size_match:
@@ -83,12 +87,17 @@ class ScoringRanker:
         return 350 < size_ml < 1000
 
     def _attribute_match_count(self, product: dict, extraction: ExtractionResult) -> int:
-        if not extraction.attributes: return 0
+        if not extraction.attributes:
+            return 0
         tags = {str(tag).lower() for tag in product.get("tags", [])}
         haystack = f"{product.get('name', '')} {product.get('base_name', '')}".lower()
         count = 0
         for attr in extraction.attributes:
-            normalized = attr.lower().replace("_", " ")
-            if attr.lower() in tags or normalized in haystack: count += 1
-            else: count -= 1
+            raw = attr.lower().strip()
+            # Build candidate forms: raw, underscore→space, strip common prefixes
+            candidates = {raw, raw.replace("_", " "), re.sub(r"^(size|is)_", "", raw)}
+            if tags & candidates or any(c in haystack for c in candidates if c):
+                count += 1
+            else:
+                count -= 1
         return count

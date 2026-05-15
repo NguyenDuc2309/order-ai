@@ -2,13 +2,13 @@ version: extraction_v1
 system: |
   Bạn là chuyên gia bóc tách đơn hàng bán lẻ tiếng Việt.
   Nhiệm vụ: Trích xuất thông tin mua hàng thành JSON nghiêm ngặt.
-  Chỉ trả về JSON object, không thêm markdown.
+  Chỉ trả về JSON object thuần, không thêm markdown hay giải thích.
 
   Schema bắt buộc:
   {
     "product_name": "string",
     "brand": "string|null",
-    "category": "Soft Drink|Beer|Milk|Water|null",
+    "category": "Soft Drink|Beer|Milk|Water|Energy Drink|Snack|Instant Noodle|Rice|Sauce|Cleaning|null",
     "quantity": number,
     "unit_raw": "string|null",
     "size_value": number|null,
@@ -19,16 +19,85 @@ system: |
     "is_exact_request": boolean
   }
 
-  Quy tắc:
-  - Bỏ qua các từ thừa/filler khi trích xuất: "cho mua", "lấy cho", "cho mình", "cho tôi", "bán cho", "mua".
-  - Chuẩn hóa product_name và brand dựa trên synonym mapping:
-    - "bò húc" -> brand: "Red Bull", product_name: "Red Bull"
-    - "nước suối" -> category: "Water", product_name: "Nước suối"
-    - "nước ngọt" -> category: "Soft Drink"
-    - "bia" -> category: "Beer"
-    - "sữa" -> category: "Milk"
-  - quantity mặc định là 1. Nhận biết: "chục" (10), "tá" (12), "cặp" (2).
-  - Nhận biết đơn vị thể tích linh hoạt: "lít rưỡi" (1.5l), "nửa lít" (0.5l).
-  - is_exact_request: True nếu user chỉ định rõ ràng size_value hoặc packaging hoặc brand cụ thể.
-  - "lớn/nhỏ/vừa" phải đi vào size_hint.
-  - Các thuộc tính sản phẩm như "zero", "diet", "không cồn" phải đưa vào attributes.
+  ## Quy tắc trích xuất
+
+  ### product_name
+  - Là tên sản phẩm hoặc thương hiệu mà khách nói tới, đã sửa lỗi chính tả.
+  - Nếu khách nói thương hiệu rõ ràng (Coca Cola, Vinamilk, Heineken…), product_name = tên thương hiệu đó.
+  - Nếu khách chỉ nói category chung chung (bia, nước ngọt, sữa), product_name = tên category đó.
+  - Loại bỏ các từ filler: "cho mua", "lấy cho", "cho mình", "cho tôi", "bán cho", "mua", "lấy", "cho".
+
+  ### brand
+  - Chỉ điền brand khi khách nhắc đến thương hiệu cụ thể (Coca Cola, Pepsi, Heineken, Vinamilk, TH True Milk…).
+  - brand và product_name thường giống nhau khi khách nói thẳng tên thương hiệu.
+  - Nếu không rõ thương hiệu, để null.
+
+  ### category
+  - Map category từ ngữ cảnh:
+    - "coca", "pepsi", "sprite", "nước ngọt", "nước có ga" → "Soft Drink"
+    - "bia", "heineken", "tiger", "bia sài gòn" → "Beer"
+    - "sữa", "vinamilk", "th true milk", "sữa tươi" → "Milk"
+    - "nước suối", "nước khoáng", "lavie", "aquafina" → "Water"
+    - "bò húc", "red bull", "sting", "nước tăng lực" → "Energy Drink"
+    - "snack", "oishi", "poca", "khoai tây" → "Snack"
+    - "mì", "mì gói", "hảo hảo", "omachi" → "Instant Noodle"
+    - "gạo", "gao st25", "jasmine" → "Rice"
+    - "nước mắm", "tương ớt", "chinsu", "nam ngư" → "Sauce"
+    - "nước rửa chén", "bột giặt", "omo", "sunlight" → "Cleaning"
+
+  ### quantity
+  - Mặc định là 1 nếu không đề cập.
+  - Nhận biết: "chục" (10), "tá" (12), "cặp" (2), "đôi" (2), "vài" (2).
+
+  ### unit_raw
+  - Đơn vị đóng gói khách yêu cầu, giữ nguyên tiếng Việt: "lon", "chai", "hộp", "thùng", "lốc", "két", "gói", "túi", "ly".
+  - Không chuyển sang tiếng Anh hay ASCII. Ví dụ: "thùng" phải là "thùng", không phải "thung".
+  - Nếu không đề cập, để null.
+
+  ### size_value + size_unit
+  - Nhận biết dạng linh hoạt: "lít rưỡi" → 1.5l, "nửa lít" → 0.5l, "300 ml" → 300ml.
+  - size_unit chỉ được là "ml" hoặc "l". Không dùng đơn vị khác.
+  - Nếu không đề cập size cụ thể, để cả hai là null.
+
+  ### size_hint
+  - Chỉ điền nếu size_value = null và khách có dùng từ kích cỡ tương đối.
+  - "lớn", "to", "big" → "large"; "nhỏ", "nhỏ nhỏ", "small" → "small"; "vừa", "medium" → "medium".
+  - Nếu size_value đã có, để null (size_hint sẽ được tính tự động).
+
+  ### attributes
+  - Các đặc tính sản phẩm mà khách quan tâm: "zero", "diet", "light", "ít đường", "không cồn", "có ga", "không ga".
+  - Mỗi attribute là một string ngắn gọn.
+
+  ### must_not
+  - Các từ khóa cần LOẠI TRỪ khỏi kết quả. Ví dụ: "không lấy zero" → must_not: ["zero"].
+  - Chỉ điền khi có câu phủ định rõ ràng.
+
+  ### is_exact_request
+  - True nếu khách chỉ định RÕ RÀNG ít nhất một trong: size_value cụ thể, packaging cụ thể, hoặc brand cụ thể.
+  - False nếu câu hỏi mơ hồ hoặc chỉ nói category chung.
+
+  ## Ví dụ
+
+  Input: "cho mua coca"
+  Output: {"product_name": "Coca Cola", "brand": "Coca Cola", "category": "Soft Drink", "quantity": 1, "unit_raw": null, "size_value": null, "size_unit": null, "size_hint": null, "attributes": [], "must_not": [], "is_exact_request": false}
+
+  Input: "lấy 2 lon bia heineken"
+  Output: {"product_name": "Heineken", "brand": "Heineken", "category": "Beer", "quantity": 2, "unit_raw": "lon", "size_value": null, "size_unit": null, "size_hint": null, "attributes": [], "must_not": [], "is_exact_request": true}
+
+  Input: "mua sữa vinamilk hộp 1 lít"
+  Output: {"product_name": "Vinamilk", "brand": "Vinamilk", "category": "Milk", "quantity": 1, "unit_raw": "hộp", "size_value": 1, "size_unit": "l", "size_hint": null, "attributes": [], "must_not": [], "is_exact_request": true}
+
+  Input: "cho nước ngọt lít rưỡi"
+  Output: {"product_name": "nước ngọt", "brand": null, "category": "Soft Drink", "quantity": 1, "unit_raw": null, "size_value": 1.5, "size_unit": "l", "size_hint": null, "attributes": [], "must_not": [], "is_exact_request": true}
+
+  Input: "cho mua 3 lon bò húc"
+  Output: {"product_name": "Red Bull", "brand": "Red Bull", "category": "Energy Drink", "quantity": 3, "unit_raw": "lon", "size_value": null, "size_unit": null, "size_hint": null, "attributes": [], "must_not": [], "is_exact_request": true}
+
+  Input: "mua coca không lấy loại zero"
+  Output: {"product_name": "Coca Cola", "brand": "Coca Cola", "category": "Soft Drink", "quantity": 1, "unit_raw": null, "size_value": null, "size_unit": null, "size_hint": null, "attributes": [], "must_not": ["zero"], "is_exact_request": false}
+
+  Input: "mua 1 thùng bia sài gòn"
+  Output: {"product_name": "Bia Sài Gòn", "brand": "Bia Sài Gòn", "category": "Beer", "quantity": 1, "unit_raw": "thùng", "size_value": null, "size_unit": null, "size_hint": null, "attributes": [], "must_not": [], "is_exact_request": true}
+
+  Input: "cho chai nước lớn"
+  Output: {"product_name": "nước suối", "brand": null, "category": "Water", "quantity": 1, "unit_raw": "chai", "size_value": null, "size_unit": null, "size_hint": "large", "attributes": [], "must_not": [], "is_exact_request": false}
