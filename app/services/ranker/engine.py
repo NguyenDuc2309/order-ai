@@ -33,7 +33,12 @@ class RankingEngine:
         top_2 = scored_rows[1] if len(scored_rows) > 1 else None
         
         # 2. Advanced Confidence Formula
-        # Based on sigmoid of score gap and absolute match quality
+        # Deterministic confidence is driven by the score gap, then banded by
+        # whether every user-specified constraint matched the top product.
+        #   base_conf = sigmoid((top1_score - top2_score) / 10)
+        #   all constraints + score > 100 => 0.95 + 0.04 * base_conf
+        #   all constraints               => 0.85 + 0.10 * base_conf
+        #   constraint mismatch           => 0.70 * base_conf
         top_score = top_1["score"]
         gap = (top_score - top_2["score"]) if top_2 else top_score
         
@@ -108,7 +113,7 @@ class RankingEngine:
         )
 
     def _top_three_diverse(self, rows: list[dict]) -> list[dict]:
-        best_seller = next((r for r in rows if r["product"]["is_best_seller"]), rows[0])
+        best_seller = next((r for r in rows if r["product"].get("is_best_seller", False)), rows[0])
         
         def get_ml(r):
             return value_to_ml(r["product"].get("size_value"), r["product"].get("size_unit"))

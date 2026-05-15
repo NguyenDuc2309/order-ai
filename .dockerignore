@@ -3,3 +3,8 @@ __pycache__
 .pytest_cache
 *.pyc
 .env
+.git
+.claude
+reports
+*.md
+PLAN.md
