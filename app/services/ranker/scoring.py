@@ -73,18 +73,25 @@ class ScoringRanker:
         return sorted(scored, key=lambda item: item["score"], reverse=True)
 
     def size_match(self, product: dict, extraction: ExtractionResult) -> bool:
+        # Prefer pre-computed size_value_ml from index; fall back to converting on the fly
+        prod_ml = float(product.get("size_value_ml") or 0.0)
+        if prod_ml == 0.0:
+            prod_ml = value_to_ml(float(product.get("size_value") or 0.0), product.get("size_unit"))
+
         if extraction.size_value is not None and extraction.size_unit is not None:
-            prod_ml = value_to_ml(float(product.get("size_value", 0.0)), product.get("size_unit"))
             ext_ml = value_to_ml(float(extraction.size_value), extraction.size_unit)
-            return abs(prod_ml - ext_ml) < 50.0
+            # Tolerance: larger for big sizes (e.g. 1000ml ±80), tighter for small (330ml ±30)
+            tolerance = max(prod_ml * 0.08, 20.0)
+            return abs(prod_ml - ext_ml) <= tolerance
 
         if extraction.size_hint is None:
             return False
 
-        size_ml = value_to_ml(float(product.get("size_value", 0.0)), product.get("size_unit"))
-        if extraction.size_hint == "large": return size_ml >= 1000
-        if extraction.size_hint == "small": return size_ml <= 350
-        return 350 < size_ml < 1000
+        if extraction.size_hint == "large":
+            return prod_ml >= 1000
+        if extraction.size_hint == "small":
+            return prod_ml <= 350
+        return 350 < prod_ml < 1000
 
     def _attribute_match_count(self, product: dict, extraction: ExtractionResult) -> int:
         if not extraction.attributes:
