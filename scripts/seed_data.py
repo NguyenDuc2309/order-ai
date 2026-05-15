@@ -25,6 +25,18 @@ MAX_ITEMS = 200
 
 EXTRA_TAGS = ["", "khuyến mãi", "ít đường", "cao cấp"]
 PACK_OPTIONS = [None, ("lốc", 6), ("thùng", 24)]
+CATEGORY_DISPLAY = {
+    "soft drink": "Soft Drink",
+    "water": "Water",
+    "beer": "Beer",
+    "milk": "Milk",
+    "energy drink": "Energy Drink",
+    "snack": "Snack",
+    "instant noodle": "Instant Noodle",
+    "rice": "Rice",
+    "sauce": "Sauce",
+    "cleaning": "Cleaning",
+}
 
 
 # =========================
@@ -85,6 +97,9 @@ def build_index_mapping(vector_dims: int):
             "properties": {
                 "id": {"type": "keyword"},
                 "name": {"type": "text"},           # hiển thị
+                "base_name": {"type": "text"},
+                "brand_display": {"type": "text"},
+                "mch_path": {"type": "text"},
                 "search_text": {"type": "text"},    # search
                 "brand": {"type": "keyword"},
                 "category": {"type": "keyword"},
@@ -92,8 +107,9 @@ def build_index_mapping(vector_dims: int):
                 "size_unit": {"type": "keyword"},
                 "size_value_ml": {"type": "float"},
                 "packaging": {"type": "keyword"},
-                "pack_size": {"type": "integer"},
+                "pack_count": {"type": "integer"},
                 "tags": {"type": "keyword"},
+                "is_best_seller": {"type": "boolean"},
                 "name_vector": {
                     "type": "dense_vector",
                     "dims": vector_dims,
@@ -112,6 +128,8 @@ def build_products():
     products = []
 
     for base_name, brand, category, sizes, packagings in BASE_PRODUCTS:
+        category_display = CATEGORY_DISPLAY.get(category, category.title())
+        brand_display = base_name.title()
         for size in sizes:
             for packaging in packagings:
                 for tag in EXTRA_TAGS:
@@ -133,19 +151,25 @@ def build_products():
                             name += f" {tag}"
 
                         search_text = normalize_text(name)
+                        tags = [value for value in [brand, category_display, packaging, tag] if value]
 
                         product = {
                             "id": str(uuid.uuid4()),
                             "name": name,  # ✅ giữ nguyên tiếng Việt
+                            "base_name": base_name,
+                            "brand_display": brand_display,
+                            "mch_path": category_display,
                             "search_text": search_text,
                             "brand": brand,
-                            "category": category,
+                            "category": category_display,
                             "size_value": float(size),
                             "size_unit": "ml",
                             "size_value_ml": float(size),
                             "packaging": packaging,
-                            "pack_size": pack[1] if pack else 1,
-                            "tags": [brand, category, tag],
+                            "pack_count": pack[1] if pack else 1,
+                            "tags": tags,
+                            "is_best_seller": False,
+                            "embed_text": f"{name} {brand_display} {category_display}",
                         }
 
                         products.append(product)
@@ -180,12 +204,13 @@ def main():
 
     actions = []
     for item in products:
-        vector = gemini.embed_text(item["search_text"])  # ✅ dùng normalized text
+        vector = gemini.embed_text(item["embed_text"])
+        source = {key: value for key, value in item.items() if key != "embed_text"}
 
         actions.append({
             "_index": settings.elastic_index,
             "_id": item["id"],
-            "_source": {**item, "name_vector": vector}
+            "_source": {**source, "name_vector": vector}
         })
 
     bulk(client, actions)

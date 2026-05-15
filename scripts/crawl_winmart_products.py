@@ -390,7 +390,7 @@ def build_index_mapping(vector_dims: int) -> dict:
                 "seo_name":     {"type": "keyword"},
                 # ── Search text fields ──
                 "name":         {"type": "text", "analyzer": "vn_text"},
-                "base_name":    {"type": "text", "analyzer": "vn_text", "boost": 2},
+                "base_name":    {"type": "text", "analyzer": "vn_text"},
                 "brand":        {"type": "keyword"},          # exact filter
                 "brand_display":{"type": "text", "analyzer": "vn_text"},  # fuzzy search
                 # ── Category ──
