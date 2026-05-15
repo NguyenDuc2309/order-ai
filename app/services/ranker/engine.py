@@ -41,11 +41,14 @@ class RankingEngine:
         # If score > 100 -> likely Brand match. If gap > 20 -> very likely correct.
         base_conf = 1 / (1 + math.exp(-gap / 10.0)) # Sigmoid of gap
         
-        # Adjust confidence by matches
-        matches_all_constraints = (
-            self.scorer.size_match(top_1["product"], extracted)
-            and (not extracted.brand or str(top_1["product"].get("brand", "")).lower() == extracted.brand.lower())
-        )
+        # Adjust confidence by matches — only check constraints the user actually specified
+        product = top_1["product"]
+        brand_ok = not extracted.brand or str(product.get("brand", "")).lower() == extracted.brand.lower()
+        category_ok = not extracted.category or str(product.get("category", "")).lower() == extracted.category.lower()
+        # Size is only a constraint when user specified a value or hint; absence = no constraint
+        has_size_constraint = extracted.size_value is not None or extracted.size_hint is not None
+        size_ok = (not has_size_constraint) or self.scorer.size_match(product, extracted)
+        matches_all_constraints = brand_ok and category_ok and size_ok
         
         if matches_all_constraints and top_score > 100:
             confidence = 0.95 + (0.04 * base_conf)
@@ -78,13 +81,13 @@ class RankingEngine:
                 confidence=confidence,
                 items=[
                     SearchItem(
-                        id=top_1["product"]["id"],
-                        name=top_1["product"]["name"],
+                        id=product["id"],
+                        name=product["name"],
                         quantity=extracted.quantity,
                         score=top_score,
                     )
                 ],
-                message=f"Đã chọn {top_1['product']['name']} và thêm {extracted.quantity} sản phẩm vào giỏ.",
+                message=f"Đã chọn {product['name']} và thêm {extracted.quantity} sản phẩm vào giỏ.",
             )
 
         # Scenario B: Needs Clarification (3 items)

@@ -44,10 +44,15 @@ class QueryBuilder:
         if extracted.unit_raw:
             should_clauses.append({"term": {"packaging": {"value": extracted.unit_raw.lower(), "boost": 20}}})
 
-        # Must Not (Exclusion)
+        # Must Not (Exclusion) — search across all text fields to reliably exclude variants
         must_not_clauses: list[dict] = []
         for keyword in extracted.must_not:
-            must_not_clauses.append({"match": {"name": keyword}})
+            must_not_clauses.append({
+                "multi_match": {
+                    "query": keyword,
+                    "fields": ["name", "base_name", "tags"],
+                }
+            })
 
         return {
             "size": 20,
@@ -55,7 +60,7 @@ class QueryBuilder:
                 "field": "name_vector",
                 "query_vector": query_vector,
                 "k": 20,
-                "num_candidates": 100,
+                "num_candidates": 200,  # ES recommends >= 10*k for quality
                 "filter": filter_clauses
             },
             "query": {
