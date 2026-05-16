@@ -36,6 +36,7 @@ class RankerConfig:
     weight_packaging_miss: float = -20.0
     weight_attribute: float = 10.0
     weight_best_seller: float = 1.0
+    weight_variant_penalty: float = 50.0
 
 
 # Per-category size-hint thresholds (ml for liquids, g for dry goods).

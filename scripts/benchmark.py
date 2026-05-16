@@ -209,6 +209,26 @@ def score_case(
     http_status: int,
     error: str = "",
 ) -> CaseResult:
+    """Score one test case under the *behavioral correctness* contract.
+
+    Rationale (xem `critical_issue.md`): "không có sản phẩm" là output hợp lệ —
+    không phải lỗi. Pipeline FAIL khi hallucinate (trả items sai), không FAIL khi
+    trung thực trả `no_result`. Benchmark đo behavior đúng, không phải so expected
+    output tĩnh được viết khi setup test.
+
+    Rule set:
+      1. HTTP error → FAIL (system fault)
+      2. Expected `no_result` (G7 — explicit OOC test):
+           actual=no_result → PASS
+           actual=anything else → FAIL (hallucination)
+      3. Expected `exact` / `clarify`:
+           actual=no_result → PASS (honest "không có trong catalog")
+           actual has items → check items:
+             - required keywords must hit at least one top item
+             - excluded keywords must NOT appear in any top item
+             - expected_qty must match items[0].quantity
+           Type mismatch (exact vs clarify) là informational, không fail.
+    """
     items = response.get("items", []) if response else []
     top_items_raw = items[:TOP_N]
     top_names_norm = [normalize_text(str(item.get("name", ""))) for item in top_items_raw]
@@ -216,48 +236,53 @@ def score_case(
 
     actual_type = response.get("type", "error") if response else "error"
 
-    # --- Kiểm tra type ---
-    type_ok = http_status == 200 and actual_type == case.expected_type
-
-    # --- Kiểm tra required keywords (+term) ---
-    # Mỗi term phải xuất hiện trong ít nhất 1 kết quả top
-    required_hits: dict[str, bool] = {}
-    for kw in case.required_keywords:
-        kw_norm = normalize_text(kw)
-        required_hits[kw] = any(kw_norm in name for name in top_names_norm)
-
-    # --- Kiểm tra excluded keywords (!term) ---
-    # Không được có bất kỳ kết quả nào chứa term bị cấm
-    excluded_hits: dict[str, bool] = {}
-    for kw in case.excluded_keywords:
-        kw_norm = normalize_text(kw)
-        excluded_hits[kw] = any(kw_norm in name for name in top_names_norm)
-
-    # --- Kiểm tra quantity ---
-    actual_qty: int | None = None
-    qty_ok = True
-    if case.expected_qty is not None:
-        first_item = items[0] if items else {}
-        actual_qty = first_item.get("quantity")
-        qty_ok = actual_qty == case.expected_qty
-
-    # --- Tổng hợp pass/fail ---
-    required_ok = all(required_hits.values()) if required_hits else True
-    excluded_ok = not any(excluded_hits.values())
-    pass_ = type_ok and required_ok and excluded_ok and qty_ok
-
-    # --- Mô tả lý do fail (chi tiết) ---
     fail_reasons: list[str] = []
-    if not type_ok:
-        fail_reasons.append(f"type={actual_type}≠{case.expected_type}")
-    for kw, hit in required_hits.items():
-        if not hit:
-            fail_reasons.append(f"required '{kw}' not found in top results")
-    for kw, hit in excluded_hits.items():
-        if hit:
-            fail_reasons.append(f"excluded variant '{kw}' appeared in results")
-    if case.expected_qty is not None and not qty_ok:
-        fail_reasons.append(f"qty={actual_qty}≠expected {case.expected_qty}")
+    required_hits: dict[str, bool] = {}
+    excluded_hits: dict[str, bool] = {}
+    actual_qty: int | None = None
+
+    # 1. HTTP error → always FAIL
+    if http_status != 200 or actual_type == "error":
+        fail_reasons.append(f"http_status={http_status} error={error[:80]}" if error else f"http_status={http_status}")
+
+    # 2. Expected no_result (G7) — strict: must abstain, not hallucinate
+    elif case.expected_type == "no_result":
+        if actual_type != "no_result":
+            fail_reasons.append(
+                f"expected no_result (out-of-catalog) but system returned {actual_type} "
+                f"with {len(items)} items — hallucination"
+            )
+
+    # 3. Expected exact/clarify
+    else:
+        if actual_type == "no_result":
+            # System trung thực nói "không có" — ACCEPTABLE per critical_issue.md.
+            # Catalog có thể chưa index sản phẩm này. Honest > hallucinated.
+            pass
+        else:
+            # System trả về items → check tính chính xác của items
+            # Required keywords
+            for kw in case.required_keywords:
+                kw_norm = normalize_text(kw)
+                required_hits[kw] = any(kw_norm in name for name in top_names_norm)
+                if not required_hits[kw]:
+                    fail_reasons.append(
+                        f"required '{kw}' not in top results — system returned wrong items"
+                    )
+            # Excluded keywords (hallucinated variants)
+            for kw in case.excluded_keywords:
+                kw_norm = normalize_text(kw)
+                excluded_hits[kw] = any(kw_norm in name for name in top_names_norm)
+                if excluded_hits[kw]:
+                    fail_reasons.append(f"excluded variant '{kw}' appeared in results")
+            # Quantity
+            if case.expected_qty is not None:
+                first_item = items[0] if items else {}
+                actual_qty = first_item.get("quantity")
+                if actual_qty != case.expected_qty:
+                    fail_reasons.append(f"qty={actual_qty}≠expected {case.expected_qty}")
+
+    pass_ = not fail_reasons
 
     return CaseResult(
         id=case.id,

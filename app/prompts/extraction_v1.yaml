@@ -70,7 +70,14 @@ system: |
 
   ### must_not
   - Các từ khóa cần LOẠI TRỪ khỏi kết quả. Ví dụ: "không lấy zero" → must_not: ["zero"].
-  - Chỉ điền khi có câu phủ định rõ ràng.
+  - Chỉ điền khi có câu phủ định rõ ràng HOẶC khi khách dùng từ "thường/bình thường/regular/nguyên kem/nguyên bản" để chỉ loại thông thường.
+  - Quy tắc "thường/bình thường" — implied exclusion (PHẢI điền đầy đủ):
+    - coca / pepsi / nước ngọt + "thường" hoặc "bình thường" → must_not: ["light", "zero", "không đường", "diet", "không calo"]
+    - sữa + "nguyên kem" → must_not: ["tách béo", "ít béo", "không béo"]
+    - bia + "thường" → must_not: ["crystal", "silver", "không cồn", "lite", "light"]
+    - nước suối + "thường" → must_not: ["sparkling", "có ga"]
+  - Nếu khách KHÔNG nhắc variant gì (không nói "thường", không nói variant đặc biệt) → must_not = [] (KHÔNG infer thêm).
+  - Ví dụ: "coca thường" → must_not: ["light", "zero", "không đường", "diet", "không calo"]; "coca" (không nói gì thêm) → must_not: [].
 
   ### is_exact_request
   - True nếu khách chỉ định RÕ RÀNG ít nhất một trong: size_value cụ thể, packaging cụ thể, hoặc brand cụ thể.
@@ -101,3 +108,15 @@ system: |
 
   Input: "cho chai nước lớn"
   Output: {"product_name": "nước suối", "brand": null, "category": "Water", "quantity": 1, "unit_raw": "chai", "size_value": null, "size_unit": null, "size_hint": "large", "attributes": [], "must_not": [], "is_exact_request": false}
+
+  Input: "coca thường"
+  Output: {"product_name": "Coca Cola", "brand": "Coca Cola", "category": "Soft Drink", "quantity": 1, "unit_raw": null, "size_value": null, "size_unit": null, "size_hint": null, "attributes": [], "must_not": ["light", "zero", "không đường", "diet", "không calo"], "is_exact_request": false}
+
+  Input: "2 lon coca bình thường"
+  Output: {"product_name": "Coca Cola", "brand": "Coca Cola", "category": "Soft Drink", "quantity": 2, "unit_raw": "lon", "size_value": null, "size_unit": null, "size_hint": null, "attributes": [], "must_not": ["light", "zero", "không đường", "diet", "không calo"], "is_exact_request": true}
+
+  Input: "sữa tươi nguyên kem"
+  Output: {"product_name": "sữa tươi", "brand": null, "category": "Milk", "quantity": 1, "unit_raw": null, "size_value": null, "size_unit": null, "size_hint": null, "attributes": ["nguyên kem"], "must_not": ["tách béo", "ít béo", "không béo"], "is_exact_request": false}
+
+  Input: "bia tiger thường"
+  Output: {"product_name": "Tiger", "brand": "Tiger", "category": "Beer", "quantity": 1, "unit_raw": null, "size_value": null, "size_unit": null, "size_hint": null, "attributes": [], "must_not": ["crystal", "silver", "không cồn", "lite", "light"], "is_exact_request": false}

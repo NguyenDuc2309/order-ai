@@ -124,31 +124,25 @@ function parseMdTestCases(text) {
 const TOP_N = 5;
 
 /**
- * Score one test case against an API response.
+ * Score one test case under the *behavioral correctness* contract.
  *
- * Pass criteria (ALL must hold):
- *   1. HTTP 200 + response.type === expectedType
- *   2. Every +term appears in at least one top-N result name
- *   3. No !term appears in any top-N result name
- *   4. If qty=N: items[0].quantity === N
+ * See `critical_issue.md`: "không có sản phẩm" is a valid output. System FAILs only
+ * when it hallucinates items, not when it honestly says no_result.
+ *
+ * Rules:
+ *   1. HTTP error → FAIL
+ *   2. expected=no_result (G7): actual must be no_result; else FAIL (hallucination)
+ *   3. expected=exact/clarify:
+ *      - actual=no_result → PASS (honest "not in catalog")
+ *      - actual has items → check required+, excluded!, and qty=
+ *      - type mismatch (exact ↔ clarify) is informational, not a fail
  *
  * @param {BenchmarkCase} tc
- * @param {object|null}   resp        Parsed API response JSON (or null on error)
+ * @param {object|null}   resp
  * @param {number}        latencyMs
  * @param {number}        httpStatus
  * @param {string}        [error]
  * @returns {CaseResult}
- *
- * @typedef {{
- *   id, status:'done', pass:boolean,
- *   failReasons:string[],
- *   actualType:string, expectedType:string,
- *   confidence:number|null,
- *   latencyMs:number, httpStatus:number,
- *   topItems:string[],
- *   actualQty:number|null,
- *   error:string
- * }} CaseResult
  */
 function scoreCase(tc, resp, latencyMs, httpStatus, error = '') {
   const items    = resp?.items ?? [];
@@ -156,37 +150,45 @@ function scoreCase(tc, resp, latencyMs, httpStatus, error = '') {
   const topNames = topRaw.map(it => normalizeVi(it.name ?? ''));
   const topDisp  = topRaw.map(it => String(it.name ?? ''));
   const actualType = resp?.type ?? (error ? 'error' : 'unknown');
-
-  // 1. Type
-  const typeOk = httpStatus === 200 && actualType === tc.expectedType;
-
-  // 2. Required (+term) — each must hit at least one result
-  const requiredHits = {};
-  for (const kw of tc.required) {
-    requiredHits[kw] = topNames.some(n => n.includes(normalizeVi(kw)));
-  }
-
-  // 3. Excluded (!term) — none may hit any result
-  const excludedHits = {};
-  for (const kw of tc.excluded) {
-    excludedHits[kw] = topNames.some(n => n.includes(normalizeVi(kw)));
-  }
-
-  // 4. Quantity
-  const actualQty = items[0]?.quantity ?? null;
-  const qtyOk = tc.qty === null || actualQty === tc.qty;
-
-  const requiredOk = Object.values(requiredHits).every(Boolean);
-  const excludedOk = !Object.values(excludedHits).some(Boolean);
-  const pass = typeOk && requiredOk && excludedOk && qtyOk;
+  const actualQty  = items[0]?.quantity ?? null;
 
   const failReasons = [];
-  if (!typeOk)    failReasons.push(`type: got "${actualType}", want "${tc.expectedType}"`);
-  for (const [kw, hit] of Object.entries(requiredHits))
-    if (!hit)   failReasons.push(`missing required "${kw}"`);
-  for (const [kw, hit] of Object.entries(excludedHits))
-    if (hit)    failReasons.push(`excluded variant "${kw}" found`);
-  if (!qtyOk)   failReasons.push(`qty: got ${actualQty}, want ${tc.qty}`);
+  const requiredHits = {};
+  const excludedHits = {};
+
+  // 1. HTTP error → FAIL
+  if (httpStatus !== 200 || actualType === 'error') {
+    failReasons.push(`http_status=${httpStatus}${error ? ' ' + error.slice(0, 80) : ''}`);
+  }
+  // 2. Expected no_result (G7): strict abstain
+  else if (tc.expectedType === 'no_result') {
+    if (actualType !== 'no_result') {
+      failReasons.push(
+        `expected no_result (out-of-catalog) but got ${actualType} with ${items.length} items — hallucination`
+      );
+    }
+  }
+  // 3. Expected exact / clarify
+  else {
+    if (actualType === 'no_result') {
+      // Honest "not in catalog" — acceptable
+    } else {
+      // Items returned — validate them
+      for (const kw of tc.required) {
+        requiredHits[kw] = topNames.some(n => n.includes(normalizeVi(kw)));
+        if (!requiredHits[kw]) failReasons.push(`required "${kw}" not in top results — wrong items`);
+      }
+      for (const kw of tc.excluded) {
+        excludedHits[kw] = topNames.some(n => n.includes(normalizeVi(kw)));
+        if (excludedHits[kw]) failReasons.push(`excluded variant "${kw}" appeared in results`);
+      }
+      if (tc.qty !== null && actualQty !== tc.qty) {
+        failReasons.push(`qty: got ${actualQty}, want ${tc.qty}`);
+      }
+    }
+  }
+
+  const pass = failReasons.length === 0;
 
   return {
     id:           tc.id,

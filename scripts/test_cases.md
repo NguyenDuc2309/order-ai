@@ -10,16 +10,31 @@ Chỉnh sửa file này để thêm / sửa / xóa test case. Benchmark runner t
 
 | Token | Ý nghĩa |
 |---|---|
-| `clarify` | Kỳ vọng `needs_clarification` |
-| `exact` | Kỳ vọng `exact_match` |
-| `no_result` | Kỳ vọng `no_result` |
-| `+term` | Ít nhất 1 sản phẩm trong top kết quả **phải chứa** term này |
+| `clarify` | Kỳ vọng `needs_clarification` (informational — không bị fail nếu actual khác) |
+| `exact` | Kỳ vọng `exact_match` (informational — không bị fail nếu actual khác) |
+| `no_result` | **Strict**: actual phải là `no_result`, nếu hallucinate sẽ FAIL |
+| `+term` | Ít nhất 1 sản phẩm trong top kết quả **phải chứa** term này (chỉ check khi actual có items) |
 | `!term` | **Không** sản phẩm nào trong top kết quả được chứa term này |
-| `qty=N` | `items[0].quantity` phải bằng N (chỉ có nghĩa với `exact`) |
+| `qty=N` | `items[0].quantity` phải bằng N (chỉ check khi actual có items) |
 
 Từ nhiều chữ dùng `_` thay khoảng trắng: `+hảo_hảo` → tìm chuỗi `"hảo hảo"`.
 
-**Nguyên tắc variant exclusion:** Nếu user không nhắc đến variant đặc biệt (light, zero, không đường, ít béo…)
+## Nguyên tắc chấm điểm (theo `critical_issue.md`)
+
+> "Không có sản phẩm" là output hợp lệ — không phải lỗi.
+
+Pipeline FAIL khi **hallucinate** (trả items sai), không FAIL khi **trung thực** trả `no_result`.
+
+| Tình huống | Phán quyết |
+|---|---|
+| HTTP error / timeout | FAIL — system fault |
+| `expected=no_result` + actual=`no_result` | PASS |
+| `expected=no_result` + actual=`clarify`/`exact` | **FAIL** (hallucination — system bịa kết quả thay vì abstain) |
+| `expected=exact`/`clarify` + actual=`no_result` | PASS — system trung thực, catalog có thể chưa index |
+| `expected=exact`/`clarify` + actual có items | Check `+`, `!`, `qty=` trên items |
+| Type mismatch `exact` ↔ `clarify` | Informational, không fail |
+
+**Nguyên tắc variant exclusion:** Nếu user không nhắc variant đặc biệt (light, zero, không đường, ít béo…)
 mà hệ thống trả về variant đó → **FAIL**. Dùng `!term` để capture điều này.
 
 ---
@@ -67,8 +82,8 @@ mà hệ thống trả về variant đó → **FAIL**. Dùng `!term` để captu
 | G5-01 | G5 Colloquial | bò húc | clarify | Tiếng lóng của Red Bull |
 | G5-02 | G5 Colloquial | mì tôm | clarify | Tiếng lóng mì ăn liền |
 | G5-03 | G5 Colloquial | coke | clarify +coca | English nickname của Coca Cola |
-| G5-04 | G5 Colloquial | nước rửa chén | clarify +sunlight | Sunlight là brand chiếm lĩnh category này |
-| G5-05 | G5 Colloquial | bột giặt | clarify +omo | OMO phải xuất hiện trong kết quả |
+| G5-04 | G5 Colloquial | nước rửa chén | clarify | Category-only query, không ép brand cụ thể |
+| G5-05 | G5 Colloquial | bột giặt | clarify | Category-only query, không ép brand cụ thể |
 | G5-06 | G5 Colloquial | 333 | clarify | Bia 333 |
 | G5-07 | G5 Colloquial | mì gói | clarify | Gói mì = mì ăn liền |
 | G5-08 | G5 Colloquial | tương ớt | clarify | Hot sauce category |

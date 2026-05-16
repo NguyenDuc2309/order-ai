@@ -34,5 +34,111 @@
     },
     "json_report": "2026-05-16_15-30-40_score-52pct.json",
     "md_report": "2026-05-16_15-30-40_score-52pct.md"
+  },
+  {
+    "run_id": "2026-05-16_15-57-36",
+    "test_cases_file": "/home/mbw1/Dev/order-ai/scripts/test_cases.md",
+    "score_pct": 35.94,
+    "pass": 23,
+    "fail": 41,
+    "total": 64,
+    "avg_latency_ms": 1197.31,
+    "avg_confidence": 0.695,
+    "failure_reasons": {
+      "required '?' not found in top results": 32,
+      "type=needs_clarification≠exact_match": 18,
+      "type=needs_clarification≠no_result": 6,
+      "type=exact_match≠needs_clarification": 1
+    },
+    "json_report": "2026-05-16_15-57-36_score-36pct.json",
+    "md_report": "2026-05-16_15-57-36_score-36pct.md"
+  },
+  {
+    "run_id": "2026-05-16_16-24-06",
+    "test_cases_file": "/home/mbw1/Dev/order-ai/scripts/test_cases.md",
+    "score_pct": 75.0,
+    "pass": 48,
+    "fail": 16,
+    "total": 64,
+    "avg_latency_ms": 1260.36,
+    "avg_confidence": 0.811,
+    "failure_reasons": {
+      "excluded variant '?' appeared in results": 9,
+      "expected no_result (out-of-catalog) but system returned needs_clarification with 3 items — hallucination": 5,
+      "required '?' not in top results — system returned wrong items": 4,
+      "expected no_result (out-of-catalog) but system returned needs_clarification with 2 items — hallucination": 1
+    },
+    "json_report": "2026-05-16_16-24-06_score-75pct.json",
+    "md_report": "2026-05-16_16-24-06_score-75pct.md"
+  },
+  {
+    "run_id": "2026-05-16_16-28-59",
+    "test_cases_file": "/home/mbw1/Dev/order-ai/scripts/test_cases.md",
+    "score_pct": 75.0,
+    "pass": 48,
+    "fail": 16,
+    "total": 64,
+    "avg_latency_ms": 1213.99,
+    "avg_confidence": 0.811,
+    "failure_reasons": {
+      "excluded variant '?' appeared in results": 9,
+      "expected no_result (out-of-catalog) but system returned needs_clarification with 3 items — hallucination": 5,
+      "required '?' not in top results — system returned wrong items": 4,
+      "expected no_result (out-of-catalog) but system returned needs_clarification with 2 items — hallucination": 1
+    },
+    "json_report": "2026-05-16_16-28-59_score-75pct.json",
+    "md_report": "2026-05-16_16-28-59_score-75pct.md"
+  },
+  {
+    "run_id": "2026-05-16_16-30-49",
+    "test_cases_file": "/home/mbw1/Dev/order-ai/scripts/test_cases.md",
+    "score_pct": 75.0,
+    "pass": 48,
+    "fail": 16,
+    "total": 64,
+    "avg_latency_ms": 1247.33,
+    "avg_confidence": 0.811,
+    "failure_reasons": {
+      "excluded variant '?' appeared in results": 9,
+      "expected no_result (out-of-catalog) but system returned needs_clarification with 3 items — hallucination": 5,
+      "required '?' not in top results — system returned wrong items": 4,
+      "expected no_result (out-of-catalog) but system returned needs_clarification with 2 items — hallucination": 1
+    },
+    "json_report": "2026-05-16_16-30-49_score-75pct.json",
+    "md_report": "2026-05-16_16-30-49_score-75pct.md"
+  },
+  {
+    "run_id": "2026-05-16_16-32-44",
+    "test_cases_file": "/home/mbw1/Dev/order-ai/scripts/test_cases.md",
+    "score_pct": 79.69,
+    "pass": 51,
+    "fail": 13,
+    "total": 64,
+    "avg_latency_ms": 1242.96,
+    "avg_confidence": 0.748,
+    "failure_reasons": {
+      "excluded variant '?' appeared in results": 10,
+      "required '?' not in top results — system returned wrong items": 3,
+      "expected no_result (out-of-catalog) but system returned needs_clarification with 3 items — hallucination": 3
+    },
+    "json_report": "2026-05-16_16-32-44_score-80pct.json",
+    "md_report": "2026-05-16_16-32-44_score-80pct.md"
+  },
+  {
+    "run_id": "2026-05-16_16-50-08",
+    "test_cases_file": "/home/mbw1/Dev/order-ai/scripts/test_cases.md",
+    "score_pct": 85.94,
+    "pass": 55,
+    "fail": 9,
+    "total": 64,
+    "avg_latency_ms": 1279.4,
+    "avg_confidence": 0.776,
+    "failure_reasons": {
+      "required '?' not in top results — system returned wrong items": 6,
+      "expected no_result (out-of-catalog) but system returned needs_clarification with 3 items — hallucination": 2,
+      "http_status=N error=Internal Server Error": 1
+    },
+    "json_report": "2026-05-16_16-50-08_score-86pct.json",
+    "md_report": "2026-05-16_16-50-08_score-86pct.md"
   }
 ]

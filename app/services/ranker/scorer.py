@@ -4,6 +4,15 @@ from app.core.config import config
 from app.models.extraction import ExtractionResult
 from app.services.ranker.constraint_audit import ConstraintAuditor, AuditResult, MatchState
 
+# Tokens that signal a "special variant" — if user did not mention any of these,
+# products containing them are penalised (variant hallucination guard).
+VARIANT_TOKENS = {
+    "light", "zero", "diet", "không đường", "không calo",
+    "tách béo", "ít béo", "không béo",
+    "crystal", "silver", "không cồn", "lite",
+    "sparkling",
+}
+
 
 @dataclass
 class ScoredRow:
@@ -54,6 +63,14 @@ class StructuralScorer:
             structural_score += (audit.attributes_ratio * len(extraction.attributes)) * self.cfg.weight_attribute
             if bool(product.get("is_best_seller")):
                 structural_score += self.cfg.weight_best_seller
+
+            # Variant penalty: if the user did NOT mention any variant keyword,
+            # penalise products whose name contains a variant token.
+            query_lower = (extraction.product_name or "").lower()
+            if not any(vt in query_lower for vt in VARIANT_TOKENS):
+                product_name_lower = product.get("name", "").lower()
+                if any(vt in product_name_lower for vt in VARIANT_TOKENS):
+                    structural_score -= self.cfg.weight_variant_penalty
 
             scored.append(
                 ScoredRow(
