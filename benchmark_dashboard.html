@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order AI — Benchmark Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="scripts/scorer.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d1117; color: #c9d1d9; min-height: 100vh; font-size: 13px; }
+
+/* HEADER */
+.header { padding: 14px 20px; border-bottom: 1px solid #21262d; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.header-title { font-size: 15px; font-weight: 700; color: #f0f6fc; letter-spacing: -.02em; }
+.header-sub { font-size: 11px; color: #6e7681; margin-top: 2px; }
+.spacer { flex: 1; }
+.header-controls { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.api-input { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 6px 10px; color: #c9d1d9; font-size: 12px; width: 280px; outline: none; }
+.api-input:focus { border-color: #388bfd; }
+input[type=file] { display: none; }
+
+/* BUTTONS */
+.btn { border: none; border-radius: 6px; padding: 6px 12px; font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: opacity .15s; }
+.btn:hover:not(:disabled) { opacity: .82; }
+.btn:disabled { opacity: .35; cursor: not-allowed; }
+.btn-primary { background: #238636; color: #fff; }
+.btn-blue    { background: #1f6feb; color: #fff; }
+.btn-ghost   { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; }
+.btn-amber   { background: #2d2600; color: #e3b341; border: 1px solid #4d3f00; }
+.btn-danger  { background: #3d1010; color: #f85149; border: 1px solid #6e2020; }
+
+/* STATUS BAR */
+.status-bar { padding: 6px 20px; background: #161b22; border-bottom: 1px solid #21262d; font-size: 11px; color: #6e7681; display: flex; align-items: center; gap: 8px; }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: #6e7681; }
+.status-dot.loaded { background: #3fb950; }
+.status-dot.empty  { background: #6e7681; }
+
+/* SUMMARY STRIP */
+.summary-strip { padding: 10px 20px; background: #0d1117; border-bottom: 1px solid #21262d; display: flex; gap: 28px; align-items: center; flex-wrap: wrap; }
+.stat .lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: #6e7681; }
+.stat .val { font-size: 22px; font-weight: 700; line-height: 1.2; }
+.stat .val-sm { font-size: 13px; font-weight: 600; line-height: 1.6; }
+.c-pass { color: #3fb950; } .c-fail { color: #f85149; } .c-neutral { color: #8b949e; } .c-blue { color: #79c0ff; }
+.progress-wrap { flex: 1; min-width: 140px; }
+.progress-bar  { height: 4px; background: #21262d; border-radius: 2px; margin-top: 4px; }
+.progress-fill { height: 100%; border-radius: 2px; transition: width .3s ease; background: #3fb950; }
+.prog-label { font-size: 11px; color: #6e7681; }
+
+/* CONTINUE BANNER */
+.banner { display: none; padding: 10px 20px; background: #1c2b1c; border-bottom: 1px solid #3fb95055; align-items: center; gap: 10px; }
+.banner.show { display: flex; }
+.banner-text { flex: 1; font-size: 12px; color: #7ee787; }
+
+/* CHARTS */
+.charts-row { display: flex; border-bottom: 1px solid #21262d; }
+.chart-panel { padding: 14px 18px; }
+.chart-panel.c-history { flex: 1.6; border-right: 1px solid #21262d; }
+.chart-panel.c-groups  { flex: 1.1; border-right: 1px solid #21262d; }
+.chart-panel.c-reasons { flex: 1; }
+.chart-title { font-size: 10px; font-weight: 700; color: #8b949e; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+canvas { max-height: 130px; }
+
+/* FILTER BAR */
+.filter-bar { padding: 8px 20px; border-bottom: 1px solid #21262d; display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+.chip { padding: 3px 10px; border-radius: 10px; font-size: 11px; font-weight: 500; border: 1px solid #30363d; background: #21262d; color: #8b949e; cursor: pointer; }
+.chip:hover { border-color: #58a6ff; color: #58a6ff; }
+.chip.active { background: #1f6feb22; border-color: #388bfd; color: #58a6ff; }
+.filter-sep { width: 1px; height: 14px; background: #30363d; margin: 0 2px; align-self: center; }
+.search { margin-left: auto; background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 4px 10px; color: #c9d1d9; font-size: 12px; width: 180px; outline: none; }
+.search:focus { border-color: #388bfd; }
+
+/* TABLE */
+.tbl-wrap { overflow-x: auto; padding-bottom: 40px; }
+table { width: 100%; border-collapse: collapse; }
+th { position: sticky; top: 0; z-index: 1; background: #161b22; text-align: left; padding: 7px 10px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #6e7681; border-bottom: 1px solid #21262d; white-space: nowrap; }
+td { padding: 8px 10px; border-bottom: 1px solid #0d1117; vertical-align: top; }
+tr:hover td { background: #161b22; }
+
+/* BADGES */
+.badge { display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 700; white-space: nowrap; }
+.b-pass    { background: #1a4d2e; color: #3fb950; }
+.b-fail    { background: #4d1a1a; color: #f85149; }
+.b-run     { background: #1a2d4d; color: #58a6ff; }
+.b-pend    { background: #21262d; color: #6e7681; }
+.b-exact   { background: #1a3358; color: #79c0ff; }
+.b-clarif  { background: #2d1f4e; color: #c084fc; }
+.b-noreso  { background: #3d2000; color: #ffa657; }
+.b-group   { background: #21262d; color: #8b949e; font-size: 10px; }
+
+/* CELLS */
+.cell-id   { color: #6e7681; font-size: 11px; white-space: nowrap; }
+.qtext     { color: #f0f6fc; font-weight: 500; }
+.qnotes    { font-size: 10px; color: #6e7681; margin-top: 2px; }
+.kw-pill   { display: inline-block; padding: 1px 5px; border-radius: 3px; font-size: 10px; margin: 1px 2px 0 0; }
+.kw-req    { background: #1a3020; border: 1px solid #3fb95033; color: #7ee787; }
+.kw-exc    { background: #3d1010; border: 1px solid #f8514933; color: #ffa3a0; }
+.item-chip { display: inline-block; background: #21262d; border: 1px solid #30363d; border-radius: 3px; padding: 1px 5px; font-size: 10px; color: #8b949e; margin: 1px 2px 0 0; }
+.fail-reason { font-size: 10px; color: #f85149; line-height: 1.6; }
+.conf-val  { font-variant-numeric: tabular-nums; }
+.lat       { color: #8b949e; font-variant-numeric: tabular-nums; }
+.lat.slow  { color: #ffa657; }
+.qty-cell  { font-size: 11px; font-variant-numeric: tabular-nums; }
+.qty-ok    { color: #3fb950; } .qty-fail { color: #f85149; } .qty-na { color: #6e7681; }
+.err-txt   { color: #f85149; font-size: 10px; max-width: 200px; word-break: break-all; }
+
+/* EMPTY */
+.empty { text-align: center; padding: 48px; color: #6e7681; }
+.empty-title { font-size: 14px; color: #8b949e; margin-bottom: 6px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <div class="header-title">Order AI — Benchmark Dashboard</div>
+    <div class="header-sub" id="headerSub">No test cases loaded</div>
+  </div>
+  <div class="spacer"></div>
+  <div class="header-controls">
+    <input type="text" class="api-input" id="apiUrl" value="http://localhost:9199/api/v1/search/product">
+
+    <button class="btn btn-ghost" onclick="document.getElementById('tcPicker').click()" title="Load test_cases.md">
+      📋 Load test_cases.md
+    </button>
+    <input type="file" id="tcPicker" accept=".md,.txt" onchange="onLoadTestCases(this)">
+
+    <button class="btn btn-ghost" onclick="document.getElementById('histPicker').click()">📈 History</button>
+    <input type="file" id="histPicker" accept=".json" onchange="onLoadHistory(this)">
+
+    <button class="btn btn-ghost" onclick="document.getElementById('rptPicker').click()">📂 Report</button>
+    <input type="file" id="rptPicker" accept=".json" onchange="onLoadReport(this)">
+
+    <button class="btn btn-amber" id="btnPrecheck" onclick="runPrecheck()" disabled>⚡ Precheck (5)</button>
+    <button class="btn btn-primary" id="btnRun" onclick="runFull()" disabled>▶ Run All</button>
+    <button class="btn btn-blue" id="btnExport" onclick="doExport()" disabled>⬇ Export</button>
+    <button class="btn btn-danger" onclick="resetAll()">↺ Reset</button>
+  </div>
+</div>
+
+<!-- STATUS BAR -->
+<div class="status-bar">
+  <div class="status-dot" id="statusDot"></div>
+  <span id="statusText">Đang thử tải scripts/test_cases.md…</span>
+</div>
+
+<!-- SUMMARY -->
+<div class="summary-strip">
+  <div class="stat"><div class="lbl">Score</div><div class="val c-neutral" id="sScore">—</div></div>
+  <div class="stat"><div class="lbl">Pass</div><div class="val c-pass" id="sPass">—</div></div>
+  <div class="stat"><div class="lbl">Fail</div><div class="val c-fail" id="sFail">—</div></div>
+  <div class="stat"><div class="lbl">Done</div><div class="val c-neutral" id="sDone">0/0</div></div>
+  <div class="stat"><div class="lbl">Avg latency</div><div class="val c-neutral" id="sLat">—</div></div>
+  <div class="stat"><div class="lbl">Avg confidence</div><div class="val c-blue" id="sConf">—</div></div>
+  <div class="stat"><div class="lbl">Conf pass / fail</div><div class="val-sm" id="sConfPF">— / —</div></div>
+  <div class="progress-wrap">
+    <div class="prog-label" id="sLabel">Not started</div>
+    <div class="progress-bar"><div class="progress-fill" id="sBar" style="width:0%"></div></div>
+  </div>
+</div>
+
+<!-- BANNER -->
+<div class="banner" id="banner">
+  <div class="banner-text" id="bannerText"></div>
+  <button class="btn btn-primary" onclick="continueFull()">Continue ▶</button>
+  <button class="btn btn-ghost" onclick="hideBanner()">Stop</button>
+</div>
+
+<!-- CHARTS -->
+<div class="charts-row">
+  <div class="chart-panel c-history">
+    <div class="chart-title">Score Timeline <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#4d5661">— load history.json</span></div>
+    <canvas id="chartHistory"></canvas>
+  </div>
+  <div class="chart-panel c-groups">
+    <div class="chart-title">Group Breakdown</div>
+    <canvas id="chartGroups"></canvas>
+  </div>
+  <div class="chart-panel c-reasons">
+    <div class="chart-title">Fail Reasons</div>
+    <canvas id="chartReasons"></canvas>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar" id="filterBar">
+  <button class="chip active" data-f="all" onclick="setFilter('all',this)">All (0)</button>
+  <button class="chip" data-f="pass" onclick="setFilter('pass',this)">✓ Pass</button>
+  <button class="chip" data-f="fail" onclick="setFilter('fail',this)">✗ Fail</button>
+  <button class="chip" data-f="pend" onclick="setFilter('pend',this)">Pending</button>
+  <div class="filter-sep"></div>
+  <!-- group chips injected dynamically -->
+  <input type="text" class="search" id="searchQ" placeholder="Search query…" oninput="renderTable()">
+</div>
+
+<!-- TABLE -->
+<div class="tbl-wrap">
+  <table>
+    <thead><tr>
+      <th>ID</th><th>Group</th><th>Query</th>
+      <th>Expected</th><th>Actual</th><th>Status</th>
+      <th>Conf</th><th>Qty exp→act</th><th>Fail reasons</th>
+      <th>Top items</th><th>Error</th>
+    </tr></thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────────────────────
+let CASES      = [];       // BenchmarkCase[] from scorer.js
+let results    = {};       // id → CaseResult
+let activeFilter = 'all';
+let running    = false;
+let stopSignal = false;
+let lastRunId  = null;
+
+let chartHistory = null;
+let chartGroups  = null;
+let chartReasons = null;
+
+// ─────────────────────────────────────────────────────────────
+// TEST CASE LOADING
+// ─────────────────────────────────────────────────────────────
+function loadCases(cases, sourceName) {
+  CASES   = cases;
+  results = {};
+  stopSignal = false;
+  lastRunId  = null;
+
+  document.getElementById('statusDot').className  = 'status-dot loaded';
+  document.getElementById('statusText').textContent = `${cases.length} test cases from ${sourceName}`;
+  document.getElementById('headerSub').textContent  = `${cases.length} test cases · scorer.js v2`;
+  document.getElementById('btnPrecheck').disabled = false;
+  document.getElementById('btnRun').disabled      = false;
+  document.getElementById('btnExport').disabled   = true;
+
+  buildGroupChips();
+  renderTable();
+  updateSummary();
+  redrawGroupChart();
+  redrawReasonsChart();
+}
+
+function onLoadTestCases(input) {
+  const f = input.files[0];
+  if (!f) return;
+  f.text().then(text => {
+    const cases = parseMdTestCases(text);
+    if (!cases.length) { alert('No valid test cases found in file.'); return; }
+    loadCases(cases, f.name);
+  });
+  input.value = '';
+}
+
+// Auto-fetch when served via HTTP
+async function tryAutoFetch() {
+  try {
+    const r = await fetch('./scripts/test_cases.md');
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const text = await r.text();
+    const cases = parseMdTestCases(text);
+    if (cases.length) { loadCases(cases, 'scripts/test_cases.md (auto)'); return; }
+  } catch (_) { /* fall through */ }
+  document.getElementById('statusDot').className  = 'status-dot empty';
+  document.getElementById('statusText').textContent = 'scripts/test_cases.md not found via fetch — load manually with the button above';
+}
+
+// ─────────────────────────────────────────────────────────────
+// API
+// ─────────────────────────────────────────────────────────────
+async function callApi(query) {
+  const url = document.getElementById('apiUrl').value.trim();
+  const t0  = performance.now();
+  const res = await fetch(url, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ query, user_id: 'benchmark-dashboard' }),
+  });
+  const latency = performance.now() - t0;
+  if (!res.ok) {
+    const txt = await res.text().catch(() => '');
+    throw Object.assign(new Error(`HTTP ${res.status}: ${txt.slice(0, 200)}`), { latency, status: res.status });
+  }
+  return { data: await res.json(), latency, status: res.status };
+}
+
+// ─────────────────────────────────────────────────────────────
+// RUN LOGIC
+// ─────────────────────────────────────────────────────────────
+async function runCases(cases) {
+  for (const tc of cases) {
+    if (stopSignal) break;
+    results[tc.id] = { id: tc.id, status: 'running' };
+    updateRow(tc.id); updateSummary();
+
+    let result;
+    try {
+      const { data, latency, status } = await callApi(tc.query);
+      result = scoreCase(tc, data, latency, status);
+    } catch (e) {
+      result = scoreCase(tc, null, e.latency ?? 0, e.status ?? 0, e.message);
+    }
+    results[tc.id] = result;
+    updateRow(tc.id); updateSummary();
+  }
+}
+
+async function runPrecheck() {
+  if (running || !CASES.length) return;
+  running = true; stopSignal = false; hideBanner();
+  setRunning(true);
+  CASES.slice(0, 5).forEach(tc => { results[tc.id] = { id: tc.id, status: 'running' }; });
+  renderTable();
+  await runCases(CASES.slice(0, 5));
+  running = false; setRunning(false);
+  const p = CASES.slice(0, 5).filter(tc => results[tc.id]?.pass).length;
+  showBanner(`Precheck: ${p}/5 passed. Tiếp tục chạy all ${CASES.length} cases?`);
+  redrawGroupChart(); redrawReasonsChart();
+}
+
+async function runFull() {
+  if (running || !CASES.length) return;
+  running = true; stopSignal = false; hideBanner();
+  setRunning(true);
+  CASES.forEach(tc => { results[tc.id] = { id: tc.id, status: 'running' }; });
+  renderTable();
+  await runCases(CASES);
+  lastRunId = new Date().toISOString().slice(0, 19).replace('T', '_').replace(/:/g, '-');
+  running = false; setRunning(false); hideBanner();
+  document.getElementById('btnExport').disabled = false;
+  redrawGroupChart(); redrawReasonsChart();
+}
+
+async function continueFull() {
+  if (running) return;
+  hideBanner();
+  running = true; stopSignal = false;
+  setRunning(true);
+  const remaining = CASES.filter(tc => results[tc.id]?.status !== 'done');
+  remaining.forEach(tc => { results[tc.id] = { id: tc.id, status: 'running' }; });
+  renderTable();
+  await runCases(remaining);
+  lastRunId = new Date().toISOString().slice(0, 19).replace('T', '_').replace(/:/g, '-');
+  running = false; setRunning(false);
+  document.getElementById('btnExport').disabled = false;
+  redrawGroupChart(); redrawReasonsChart();
+}
+
+function resetAll() {
+  stopSignal = true; running = false; results = {};
+  lastRunId = null; hideBanner();
+  document.getElementById('btnExport').disabled = true;
+  setRunning(false);
+  renderTable(); updateSummary(); redrawGroupChart(); redrawReasonsChart();
+}
+
+function setRunning(on) {
+  document.getElementById('btnRun').disabled      = on || !CASES.length;
+  document.getElementById('btnPrecheck').disabled = on || !CASES.length;
+}
+
+function showBanner(msg) {
+  document.getElementById('bannerText').textContent = msg;
+  document.getElementById('banner').classList.add('show');
+}
+function hideBanner() { document.getElementById('banner').classList.remove('show'); }
+
+// ─────────────────────────────────────────────────────────────
+// FILTER + RENDER
+// ─────────────────────────────────────────────────────────────
+function buildGroupChips() {
+  const bar   = document.getElementById('filterBar');
+  const sep   = bar.querySelector('.filter-sep');
+  // Remove existing group chips
+  bar.querySelectorAll('.chip[data-group]').forEach(el => el.remove());
+
+  const groups = [...new Set(CASES.map(tc => tc.group))];
+  groups.forEach(g => {
+    const btn = document.createElement('button');
+    btn.className      = 'chip';
+    btn.dataset.f      = g;
+    btn.dataset.group  = '1';
+    btn.textContent    = g.replace(/^(G\d+)\s+/, '$1 ').split(' ').slice(0, 2).join(' ');
+    btn.onclick        = () => setFilter(g, btn);
+    sep.insertAdjacentElement('afterend', btn);
+  });
+
+  // Update "All" count
+  bar.querySelector('[data-f="all"]').textContent = `All (${CASES.length})`;
+}
+
+function setFilter(f, el) {
+  activeFilter = f;
+  document.querySelectorAll('.chip[data-f]').forEach(b => b.classList.remove('active'));
+  el?.classList.add('active');
+  renderTable();
+}
+
+function matchFilter(tc) {
+  const r  = results[tc.id];
+  const q  = document.getElementById('searchQ').value.trim().toLowerCase();
+  if (q && !tc.query.toLowerCase().includes(q) && !tc.id.toLowerCase().includes(q)) return false;
+  if (activeFilter === 'all')  return true;
+  if (activeFilter === 'pass') return r?.status === 'done' && r.pass;
+  if (activeFilter === 'fail') return r?.status === 'done' && !r.pass;
+  if (activeFilter === 'pend') return r?.status !== 'done';
+  return tc.group === activeFilter;
+}
+
+function renderTable() {
+  const tbody = document.getElementById('tbody');
+  const rows  = CASES.filter(matchFilter);
+  if (!CASES.length) {
+    tbody.innerHTML = `<tr><td colspan="11"><div class="empty"><div class="empty-title">No test cases loaded</div>Load <code>scripts/test_cases.md</code> to get started</div></td></tr>`;
+    return;
+  }
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="11"><div class="empty">No cases match this filter</div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows.map(buildRow).join('');
+}
+
+function updateRow(id) {
+  const tc  = CASES.find(c => c.id === id);
+  const row = document.getElementById(`row-${id}`);
+  if (tc && row) row.outerHTML = buildRow(tc);
+}
+
+// ─────────────────────────────────────────────────────────────
+// ROW BUILDER
+// ─────────────────────────────────────────────────────────────
+function typeBadge(t) {
+  const map = {
+    exact_match:         ['b-exact',  'Exact'],
+    needs_clarification: ['b-clarif', 'Clarify'],
+    no_result:           ['b-noreso', 'No result'],
+  };
+  const [cls, lbl] = map[t] ?? ['b-pend', t || '—'];
+  return `<span class="badge ${cls}">${lbl}</span>`;
+}
+
+function buildRow(tc) {
+  const r      = results[tc.id] ?? {};
+  const status = r.status ?? 'pending';
+
+  const statusBadge =
+    status === 'running' ? `<span class="badge b-run">⟳</span>` :
+    status === 'done'    ? (r.pass ? `<span class="badge b-pass">✓ PASS</span>` : `<span class="badge b-fail">✗ FAIL</span>`) :
+    `<span class="badge b-pend">—</span>`;
+
+  const actualBadge =
+    status === 'done'    ? typeBadge(r.actualType) :
+    status === 'running' ? `<span class="badge b-run">…</span>` : '—';
+
+  // Expected: type badge + keyword pills
+  const kwHtml = [
+    ...tc.required.map(k => `<span class="kw-pill kw-req">+${esc(k)}</span>`),
+    ...tc.excluded.map(k => `<span class="kw-pill kw-exc">!${esc(k)}</span>`),
+  ].join('');
+
+  const confHtml = (status === 'done' && r.confidence != null)
+    ? `<span class="conf-val">${Math.round(r.confidence * 100)}%</span>` : '—';
+
+  const qtyHtml = (() => {
+    if (tc.qty === null) return `<span class="qty-cell qty-na">—</span>`;
+    if (status !== 'done') return `<span class="qty-cell qty-na">${tc.qty}→?</span>`;
+    const ok = r.actualQty === tc.qty;
+    return `<span class="qty-cell ${ok ? 'qty-ok' : 'qty-fail'}">${tc.qty}→${r.actualQty ?? '?'}</span>`;
+  })();
+
+  const latHtml = (status === 'done' && r.latencyMs != null)
+    ? `<span class="lat ${r.latencyMs > 3000 ? 'slow' : ''}">${r.latencyMs}ms</span>` : '—';
+
+  const failHtml = (status === 'done' && r.failReasons?.length)
+    ? r.failReasons.map(f => `<div class="fail-reason">· ${esc(f)}</div>`).join('')
+    : (status === 'done' ? '<span style="color:#3fb950;font-size:10px">ok</span>' : '—');
+
+  const itemsHtml = (status === 'done' && r.topItems?.length)
+    ? r.topItems.map(n => `<span class="item-chip">${esc(n)}</span>`).join('')
+    : '—';
+
+  const errHtml = r.error
+    ? `<span class="err-txt" title="${esc(r.error)}">${esc(r.error.slice(0, 80))}${r.error.length > 80 ? '…' : ''}</span>`
+    : '';
+
+  return `<tr id="row-${tc.id}">
+    <td class="cell-id">${tc.id}</td>
+    <td><span class="badge b-group">${esc(tc.group)}</span></td>
+    <td><div class="qtext">${esc(tc.query)}</div><div class="qnotes">${esc(tc.notes)}</div></td>
+    <td>${typeBadge(tc.expectedType)}<div style="margin-top:3px">${kwHtml}</div></td>
+    <td>${actualBadge}</td>
+    <td>${statusBadge}</td>
+    <td>${confHtml}</td>
+    <td>${qtyHtml}</td>
+    <td>${failHtml}</td>
+    <td style="max-width:280px">${itemsHtml}</td>
+    <td>${errHtml}</td>
+  </tr>`;
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─────────────────────────────────────────────────────────────
+// SUMMARY BAR
+// ─────────────────────────────────────────────────────────────
+function updateSummary() {
+  const s    = summarize(CASES, results);
+  const done = s.total;
+  const tot  = CASES.length;
+
+  const fmtC = v => v != null ? Math.round(v * 100) + '%' : '—';
+
+  document.getElementById('sScore').textContent = done ? s.scorePct + '%' : '—';
+  document.getElementById('sScore').className   = 'val ' + (!done ? 'c-neutral' : s.scorePct >= 80 ? 'c-pass' : 'c-fail');
+  document.getElementById('sPass').textContent  = done ? s.pass : '—';
+  document.getElementById('sFail').textContent  = done ? s.fail : '—';
+  document.getElementById('sDone').textContent  = `${done}/${tot}`;
+  document.getElementById('sLat').textContent   = s.avgLatency ? Math.round(s.avgLatency) + 'ms' : '—';
+  document.getElementById('sConf').textContent  = fmtC(s.avgConf);
+  document.getElementById('sConfPF').innerHTML  =
+    `<span class="c-pass">${fmtC(s.avgConfPass)}</span> / <span class="c-fail">${fmtC(s.avgConfFail)}</span>`;
+  document.getElementById('sBar').style.width   = tot ? Math.round(done / tot * 100) + '%' : '0%';
+  document.getElementById('sLabel').textContent = done
+    ? `${done}/${tot} done · ${s.pass} passed · ${s.fail} failed`
+    : 'Not started';
+}
+
+// ─────────────────────────────────────────────────────────────
+// CHARTS
+// ─────────────────────────────────────────────────────────────
+const CHART_DEFAULTS = {
+  responsive: true, maintainAspectRatio: false,
+  plugins: { legend: { labels: { color: '#8b949e', font: { size: 10 } } } },
+};
+
+function redrawGroupChart() {
+  const groups   = [...new Set(CASES.map(tc => tc.group))];
+  const passData = groups.map(g => CASES.filter(tc => tc.group === g && results[tc.id]?.pass).length);
+  const failData = groups.map(g => CASES.filter(tc => tc.group === g && results[tc.id]?.status === 'done' && !results[tc.id]?.pass).length);
+  const labels   = groups.map(g => g.replace(/^(G\d+)\s+/, '$1\n').split('\n').join(' ').slice(0, 12));
+
+  chartGroups?.destroy();
+  chartGroups = new Chart(document.getElementById('chartGroups'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Pass', data: passData, backgroundColor: '#3fb95055', borderColor: '#3fb950', borderWidth: 1 },
+        { label: 'Fail', data: failData, backgroundColor: '#f8514955', borderColor: '#f85149', borderWidth: 1 },
+      ]
+    },
+    options: {
+      ...CHART_DEFAULTS,
+      scales: {
+        x: { stacked: true, ticks: { color: '#6e7681', font: { size: 9 } }, grid: { color: '#21262d' } },
+        y: { stacked: true, ticks: { color: '#8b949e', font: { size: 9 } }, grid: { color: '#21262d' }, beginAtZero: true },
+      }
+    }
+  });
+}
+
+function redrawReasonsChart() {
+  const s = summarize(CASES, results);
+  const entries = Object.entries(s.reasonCounts ?? {}).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  if (!entries.length) { chartReasons?.destroy(); return; }
+
+  const labels = entries.map(([k]) => k.length > 30 ? k.slice(0, 28) + '…' : k);
+  const data   = entries.map(([, v]) => v);
+
+  chartReasons?.destroy();
+  chartReasons = new Chart(document.getElementById('chartReasons'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{ label: 'Count', data, backgroundColor: '#f8514966', borderColor: '#f85149', borderWidth: 1 }]
+    },
+    options: {
+      ...CHART_DEFAULTS,
+      indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#8b949e', font: { size: 9 } }, grid: { color: '#21262d' }, beginAtZero: true },
+        y: { ticks: { color: '#8b949e', font: { size: 9 } }, grid: { display: false } },
+      }
+    }
+  });
+}
+
+function renderHistoryChart(history) {
+  if (!history?.length) return;
+  const labels = history.map(h => h.run_id?.slice(0, 16).replace('_', ' ') ?? '');
+  const scores = history.map(h => h.score_pct ?? h.scorePct ?? 0);
+
+  chartHistory?.destroy();
+  chartHistory = new Chart(document.getElementById('chartHistory'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Score %', data: scores,
+        borderColor: '#58a6ff', backgroundColor: '#58a6ff22',
+        borderWidth: 2, tension: 0.3, fill: true,
+        pointBackgroundColor: scores.map(s => s >= 80 ? '#3fb950' : '#f85149'),
+        pointRadius: 4,
+      }]
+    },
+    options: {
+      ...CHART_DEFAULTS,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => `Score: ${scores[ctx.dataIndex]}%` } },
+      },
+      scales: {
+        x: { ticks: { color: '#6e7681', font: { size: 9 }, maxRotation: 30 }, grid: { color: '#21262d' } },
+        y: { min: 0, max: 100, ticks: { color: '#8b949e', font: { size: 9 }, callback: v => v + '%' }, grid: { color: '#21262d' } },
+      }
+    }
+  });
+}
+
+// ─────────────────────────────────────────────────────────────
+// FILE LOADERS
+// ─────────────────────────────────────────────────────────────
+function onLoadHistory(input) {
+  const f = input.files[0]; if (!f) return;
+  f.text().then(t => {
+    try { renderHistoryChart(JSON.parse(t)); }
+    catch (e) { alert('Invalid history.json: ' + e.message); }
+  });
+  input.value = '';
+}
+
+function onLoadReport(input) {
+  const f = input.files[0]; if (!f) return;
+  f.text().then(t => {
+    try {
+      const d = JSON.parse(t);
+      if (!d.results) throw new Error('Missing results array');
+      results = {};
+      for (const r of d.results) {
+        results[r.id] = {
+          id: r.id, status: 'done',
+          pass:       r.pass,
+          failReasons: r.fail_reasons ?? [],
+          actualType:  r.actual_type,
+          confidence:  r.confidence,
+          latencyMs:   r.latency_ms,
+          httpStatus:  r.http_status,
+          topItems:    r.top_items ?? [],
+          actualQty:   r.actual_qty ?? null,
+          error:       r.error ?? '',
+        };
+      }
+      lastRunId = d.run_id ?? 'loaded';
+      document.getElementById('btnExport').disabled = false;
+      renderTable(); updateSummary(); redrawGroupChart(); redrawReasonsChart();
+    } catch (e) { alert('Invalid report JSON: ' + e.message); }
+  });
+  input.value = '';
+}
+
+// ─────────────────────────────────────────────────────────────
+// EXPORT
+// ─────────────────────────────────────────────────────────────
+function doExport() {
+  if (!lastRunId) return;
+  const s = summarize(CASES, results);
+  const payload = {
+    run_id: lastRunId,
+    api_url: document.getElementById('apiUrl').value.trim(),
+    summary: {
+      total: s.total, pass: s.pass, fail: s.fail, score_pct: s.scorePct,
+      avg_latency_ms: Math.round(s.avgLatency ?? 0),
+      avg_confidence: s.avgConf, avg_confidence_pass: s.avgConfPass, avg_confidence_fail: s.avgConfFail,
+      failure_reasons: s.reasonCounts, groups: s.groups,
+    },
+    results: CASES.map(tc => {
+      const r = results[tc.id] ?? {};
+      return {
+        id: tc.id, group: tc.group, query: tc.query,
+        expected_type: tc.expectedType, actual_type: r.actualType ?? '',
+        pass: r.pass ?? false,
+        fail_reasons: r.failReasons ?? [],
+        required_keywords: tc.required, excluded_keywords: tc.excluded,
+        expected_qty: tc.qty, actual_qty: r.actualQty ?? null,
+        confidence: r.confidence, latency_ms: r.latencyMs,
+        http_status: r.httpStatus, top_items: r.topItems ?? [],
+        error: r.error ?? '',
+      };
+    }),
+  };
+
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const a = Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(blob),
+    download: `${lastRunId}_score-${Math.round(s.scorePct)}pct.json`,
+  });
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// ─────────────────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────────────────
+tryAutoFetch();
+renderTable();
+updateSummary();
+redrawGroupChart();
+redrawReasonsChart();
+</script>
+</body>
+</html>

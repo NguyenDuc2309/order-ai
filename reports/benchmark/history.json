@@ -1,0 +1,38 @@
+[
+  {
+    "run_id": "2026-05-16_15-28-47",
+    "test_cases_file": "/home/mbw1/Dev/order-ai/scripts/test_cases.md",
+    "score_pct": 51.56,
+    "pass": 33,
+    "fail": 31,
+    "total": 64,
+    "avg_latency_ms": 1243.9,
+    "avg_confidence": 0.821,
+    "failure_reasons": {
+      "type=needs_clarification≠exact_match": 19,
+      "excluded variant '?' appeared in results": 9,
+      "required '?' not found in top results": 6,
+      "type=needs_clarification≠no_result": 6
+    },
+    "json_report": "2026-05-16_15-28-47_score-52pct.json",
+    "md_report": "2026-05-16_15-28-47_score-52pct.md"
+  },
+  {
+    "run_id": "2026-05-16_15-30-40",
+    "test_cases_file": "/home/mbw1/Dev/order-ai/scripts/test_cases.md",
+    "score_pct": 51.56,
+    "pass": 33,
+    "fail": 31,
+    "total": 64,
+    "avg_latency_ms": 1230.64,
+    "avg_confidence": 0.821,
+    "failure_reasons": {
+      "type=needs_clarification≠exact_match": 19,
+      "excluded variant '?' appeared in results": 9,
+      "required '?' not found in top results": 6,
+      "type=needs_clarification≠no_result": 6
+    },
+    "json_report": "2026-05-16_15-30-40_score-52pct.json",
+    "md_report": "2026-05-16_15-30-40_score-52pct.md"
+  }
+]

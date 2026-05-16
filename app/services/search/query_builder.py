@@ -1,5 +1,4 @@
 from app.models.extraction import ExtractionResult
-from app.utils.unit_converter import value_to_ml
 
 
 class QueryBuilder:
@@ -16,32 +15,18 @@ class QueryBuilder:
             }
         ]
 
-        # 2. Hard size filter — applied at ES level to cut candidate pool
-        filter_clauses: list[dict] = []
-        if extracted.size_value is not None and extracted.size_unit is not None:
-            prod_ml = value_to_ml(extracted.size_value, extracted.size_unit)
-            # ±8% tolerance to handle minor indexing discrepancies
-            tolerance = max(prod_ml * 0.08, 15.0)
-            filter_clauses.append({
-                "range": {
-                    "size_value_ml": {
-                        "gte": prod_ml - tolerance,
-                        "lte": prod_ml + tolerance,
-                    }
-                }
-            })
-
-        # 3. Soft boosting — brand keyword (exact) + category + packaging
+        # 2. Soft boosting — brand_norm keyword (exact) + category_norm + packaging
+        # Size is intentionally NOT filtered here — StructuralScorer handles size match/penalty
+        # so ES recall stays high and only post-retrieval scoring cuts wrong sizes.
         should_clauses: list[dict] = []
         if extracted.brand:
-            # brand is a keyword field → exact lowercase match
-            should_clauses.append({"term": {"brand": {"value": extracted.brand.lower(), "boost": 60}}})
+            should_clauses.append({"term": {"brand_norm": {"value": extracted.brand.lower(), "boost": 60}}})
         if extracted.category:
-            should_clauses.append({"term": {"category": {"value": extracted.category, "boost": 30}}})
+            should_clauses.append({"term": {"category_norm": {"value": extracted.category.lower(), "boost": 30}}})
         if extracted.unit_raw:
             should_clauses.append({"term": {"packaging": {"value": extracted.unit_raw.lower(), "boost": 20}}})
 
-        # 4. Must-not — exclude across all searchable text + tags keyword field
+        # 3. Must-not — exclude across all searchable text + tags keyword field
         must_not_clauses: list[dict] = []
         for keyword in extracted.must_not:
             must_not_clauses.append({
@@ -60,12 +45,10 @@ class QueryBuilder:
                 "query_vector": query_vector,
                 "k": 20,
                 "num_candidates": 200,  # ES recommends >= 10*k for quality
-                "filter": filter_clauses
             },
             "query": {
                 "bool": {
                     "must": must_clauses,
-                    "filter": filter_clauses,
                     "should": should_clauses,
                     "must_not": must_not_clauses,
                 }

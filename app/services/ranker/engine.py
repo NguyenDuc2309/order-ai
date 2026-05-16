@@ -1,16 +1,27 @@
-import math
-from app.core.clients.gemini import GeminiClient
+from app.core.logging_config import setup_audit_logger
 from app.models.extraction import ExtractionResult
 from app.models.response import SearchItem, SearchResponse
-from app.services.ranker.reranker import GeminiReranker
-from app.services.ranker.scoring import ScoringRanker
-from app.utils.unit_converter import value_to_ml
+from app.services.ranker.constraint_audit import ConstraintAuditor
+from app.services.ranker.decider import Decider, Decision
+from app.services.ranker.scorer import StructuralScorer
 
 
 class RankingEngine:
+    """Orchestrator cho toàn bộ ranking pipeline.
+
+    Flow: rows → StructuralScorer → Decider → SearchResponse
+    Ghi structured audit log (query, extraction, top_product, audit, decision) sau mỗi call.
+
+    Usage:
+        engine = RankingEngine()
+        response = engine.decide(extracted, rows, original_query)
+    """
+
     def __init__(self) -> None:
-        self.scorer = ScoringRanker()
-        self.reranker = GeminiReranker(gemini_client=GeminiClient())
+        self.auditor = ConstraintAuditor()
+        self.scorer = StructuralScorer()
+        self.decider = Decider()
+        self.audit_logger = setup_audit_logger()
 
     def decide(
         self,
@@ -19,112 +30,75 @@ class RankingEngine:
         original_query: str = "",
     ) -> SearchResponse:
         if not rows:
-            return SearchResponse(
-                status="success",
-                type="no_result",
-                confidence=0.0,
-                items=[],
-                message="Không tìm thấy sản phẩm phù hợp, bạn thử mô tả chi tiết hơn nhé.",
-            )
+            decision = self.decider.decide([], extracted)
+            self._log_audit(extracted, None, decision, original_query)
+            return self._to_response(decision, extracted)
 
-        # 1. Scoring (Deterministic Backend Rules)
         scored_rows = self.scorer.score(rows, extracted)
-        top_1 = scored_rows[0]
-        top_2 = scored_rows[1] if len(scored_rows) > 1 else None
-        
-        # 2. Advanced Confidence Formula
-        # Deterministic confidence is driven by the score gap, then banded by
-        # whether every user-specified constraint matched the top product.
-        #   base_conf = sigmoid((top1_score - top2_score) / 10)
-        #   all constraints + score > 100 => 0.95 + 0.04 * base_conf
-        #   all constraints               => 0.85 + 0.10 * base_conf
-        #   constraint mismatch           => 0.70 * base_conf
-        top_score = top_1["score"]
-        gap = (top_score - top_2["score"]) if top_2 else top_score
-        
-        # Determine confidence based on "Score Bands"
-        # If score > 100 -> likely Brand match. If gap > 20 -> very likely correct.
-        base_conf = 1 / (1 + math.exp(-gap / 10.0)) # Sigmoid of gap
-        
-        # Adjust confidence by matches — only check constraints the user actually specified
-        product = top_1["product"]
-        brand_ok = not extracted.brand or str(product.get("brand", "")).lower() == extracted.brand.lower()
-        category_ok = not extracted.category or str(product.get("category", "")).lower() == extracted.category.lower()
-        # Size is only a constraint when user specified a value or hint; absence = no constraint
-        has_size_constraint = extracted.size_value is not None or extracted.size_hint is not None
-        size_ok = (not has_size_constraint) or self.scorer.size_match(product, extracted)
-        matches_all_constraints = brand_ok and category_ok and size_ok
-        
-        if matches_all_constraints and top_score > 100:
-            confidence = 0.95 + (0.04 * base_conf)
-        elif matches_all_constraints:
-            confidence = 0.85 + (0.1 * base_conf)
-        else:
-            confidence = base_conf * 0.7 # Penalize for mismatch
-            
-        confidence = round(min(0.99, max(0.01, confidence)), 2)
-        
-        # 3. Decision Logic - BACKEND CONFIDENCE DRIVEN
-        # Backend score/gap overrides LLM extraction flags
-        # Exact match criteria:
-        # - High confidence (>= 0.85) 
-        # - Clear winner (gap > 20 for matched constraints, or gap > 40 otherwise)
-        # - All constraints matched
-        
-        gap_threshold = 20 if matches_all_constraints else 40
-        
-        is_exact = (
-            confidence >= 0.85 and 
-            gap > gap_threshold and
-            matches_all_constraints
-        )
+        decision = self.decider.decide(scored_rows, extracted)
+        self._log_audit(extracted, scored_rows[0], decision, original_query)
+        return self._to_response(decision, extracted)
 
-        if is_exact:
+    def _to_response(self, decision: Decision, extracted: ExtractionResult) -> SearchResponse:
+        if decision.type == "exact_match":
+            top = decision.items[0]
             return SearchResponse(
                 status="success",
                 type="exact_match",
-                confidence=confidence,
+                confidence=decision.confidence,
                 items=[
                     SearchItem(
-                        id=product["id"],
-                        name=product["name"],
+                        id=top.product["id"],
+                        name=top.product["name"],
                         quantity=extracted.quantity,
-                        score=top_score,
+                        score=top.structural_score,
                     )
                 ],
-                message=f"Đã chọn {product['name']} và thêm {extracted.quantity} sản phẩm vào giỏ.",
+                message=f"Đã chọn {top.product['name']} và thêm {extracted.quantity} sản phẩm vào giỏ.",
             )
-
-        # Scenario B: Needs Clarification (3 items)
-        choices = self._top_three_diverse(scored_rows)
+        if decision.type == "no_result":
+            return SearchResponse(
+                status="success",
+                type="no_result",
+                confidence=decision.confidence,
+                items=[],
+                message="Không tìm thấy sản phẩm phù hợp, bạn thử mô tả chi tiết hơn nhé.",
+            )
         return SearchResponse(
             status="success",
             type="needs_clarification",
-            confidence=confidence,
+            confidence=decision.confidence,
             items=[
                 SearchItem(
-                    id=r["product"]["id"], 
-                    name=r["product"]["name"], 
-                    score=r["score"],
-                    quantity=extracted.quantity # Support quantity here too
-                ) for r in choices
+                    id=row.product["id"],
+                    name=row.product["name"],
+                    quantity=extracted.quantity,
+                    score=row.structural_score,
+                )
+                for row in decision.items
             ],
             message="Mình tìm thấy vài lựa chọn gần nhất, bạn chọn giúp mình sản phẩm phù hợp nhé.",
         )
 
-    def _top_three_diverse(self, rows: list[dict]) -> list[dict]:
-        best_seller = next((r for r in rows if r["product"].get("is_best_seller", False)), rows[0])
-        
-        def get_ml(r):
-            return value_to_ml(r["product"].get("size_value"), r["product"].get("size_unit"))
-
-        largest = max(rows, key=get_ml)
-        smallest = min(rows, key=get_ml)
-        
-        picked = []
-        for row in [best_seller, largest, smallest]:
-            if row["product"]["id"] not in {p["product"]["id"] for p in picked}:
-                picked.append(row)
-            if len(picked) == 3:
-                break
-        return picked
+    def _log_audit(self, extracted: ExtractionResult, top, decision: Decision, query: str) -> None:
+        top_product = top.product["name"] if top else ""
+        audit_payload = {}
+        if top:
+            audit_payload = self.auditor.to_dict(top.audit)
+        self.audit_logger.info(
+            "ranking_engine_decision",
+            extra={
+                "event": {
+                    "query": query,
+                    "extraction": extracted.model_dump(),
+                    "top_product": top_product,
+                    "audit": audit_payload,
+                    "decision": {
+                        "type": decision.type,
+                        "confidence": decision.confidence,
+                        "reason": decision.reason,
+                        "item_ids": [str(item.product.get("id")) for item in decision.items],
+                    },
+                }
+            },
+        )

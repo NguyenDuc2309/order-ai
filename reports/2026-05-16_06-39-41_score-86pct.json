@@ -1,0 +1,1169 @@
+{
+  "run_id": "2026-05-16_06-39-41",
+  "api_url": "http://localhost:8001/api/v1/search/product",
+  "summary": {
+    "total": 50,
+    "pass": 43,
+    "fail": 7,
+    "score_pct": 86,
+    "avg_latency_ms": 1212,
+    "avg_confidence": 0.84,
+    "avg_confidence_pass": 0.825,
+    "avg_confidence_fail": 0.934,
+    "failure_types": {
+      "needs_clarification → exact_match": 2,
+      "no_result → needs_clarification": 5
+    },
+    "groups": {
+      "G1": {
+        "total": 10,
+        "pass": 10,
+        "fail": 0,
+        "brand_hit": 10,
+        "avg_confidence": 0.862
+      },
+      "G2": {
+        "total": 5,
+        "pass": 5,
+        "fail": 0,
+        "brand_hit": 4,
+        "avg_confidence": 0.848
+      },
+      "G3": {
+        "total": 7,
+        "pass": 6,
+        "fail": 1,
+        "brand_hit": 6,
+        "avg_confidence": 0.686
+      },
+      "G4": {
+        "total": 7,
+        "pass": 7,
+        "fail": 0,
+        "brand_hit": 4,
+        "avg_confidence": 0.884
+      },
+      "G5": {
+        "total": 4,
+        "pass": 3,
+        "fail": 1,
+        "brand_hit": 4,
+        "avg_confidence": 0.965
+      },
+      "G6": {
+        "total": 6,
+        "pass": 6,
+        "fail": 0,
+        "brand_hit": 3,
+        "avg_confidence": 0.74
+      },
+      "G7": {
+        "total": 4,
+        "pass": 4,
+        "fail": 0,
+        "brand_hit": 2,
+        "avg_confidence": 0.833
+      },
+      "G8": {
+        "total": 3,
+        "pass": 2,
+        "fail": 1,
+        "brand_hit": 2,
+        "avg_confidence": 0.97
+      },
+      "G9": {
+        "total": 4,
+        "pass": 0,
+        "fail": 4,
+        "brand_hit": 4,
+        "avg_confidence": 0.908
+      }
+    }
+  },
+  "results": [
+    {
+      "id": "G1-01",
+      "group": "G1",
+      "query": "coca cola",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "coca cola"
+      ],
+      "latency_ms": 1303,
+      "http_status": 200,
+      "confidence": 0.41,
+      "item_count": 3,
+      "top_items": [
+        "Nước giải khát không đường Coca Cola Light lon 330ml",
+        "Nước giải khát Coca Cola chai 1.5lít",
+        "Nước Giải Khát Coca-Cola Sleek 235ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G1-02",
+      "group": "G1",
+      "query": "pepsi",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "pepsi"
+      ],
+      "latency_ms": 1272,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "Nước giải khát không calo Pepsi 330ml",
+        "Nước giải khát có gas Pepsico chai 1.5 lít",
+        "ROCKSTAR Nước tăng lực 250ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G1-03",
+      "group": "G1",
+      "query": "sprite",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "sprite"
+      ],
+      "latency_ms": 1225,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "Nước giải khát hương chanh Sprite chai 390ml",
+        "Nước giải khát huong chanh Sprite chai 1.5L",
+        "Khăn lau đa năng 3M Scotch Brite"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G1-04",
+      "group": "G1",
+      "query": "lavie",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "lavie"
+      ],
+      "latency_ms": 1206,
+      "http_status": 200,
+      "confidence": 0.45,
+      "item_count": 2,
+      "top_items": [
+        "Nước khoáng LaVie 5",
+        "DOWNY Nước xả hương oải hương túi 3,5L"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G1-05",
+      "group": "G1",
+      "query": "aquafina",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "aquafina"
+      ],
+      "latency_ms": 1145,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "Nước uống thể thao Aquarius chai 390ml",
+        "Nước uống Aquafina chai 5L",
+        "Nước tăng lực Rockstar lon 250ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G1-06",
+      "group": "G1",
+      "query": "tiger",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "tiger"
+      ],
+      "latency_ms": 1136,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "TIGER Bia lon 250ml",
+        "Lốc 6 lon bia Tiger crystal 330ml",
+        "Dao cạo râu Gillette Vector"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G1-07",
+      "group": "G1",
+      "query": "heineken",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "heineken"
+      ],
+      "latency_ms": 1122,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "Bia Heineken Silver thùng 24 lon x 330ml",
+        "Dầu gội Head&Shoulders bạc hà 600ml",
+        "Thùng 24 lon bia Heineken 330ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G1-08",
+      "group": "G1",
+      "query": "vinamilk",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "vinamilk"
+      ],
+      "latency_ms": 1108,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "VINAMILK Sữa tươi TT Dừa 180ml",
+        "Sữa tươi tiệt trùng Vinamilk có đường hộp 1 lít",
+        "VINAMILK Sữa tươi TT ko đường 110ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G1-09",
+      "group": "G1",
+      "query": "omo",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "omo"
+      ],
+      "latency_ms": 1198,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "OMO Viên Giặt Xả Hương Tinh Tế 315g",
+        "Đậu phụ tươi Làng Mơ hộp 400g",
+        "INOCHI Nồi vân đá Omi Simple 20cm"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G1-10",
+      "group": "G1",
+      "query": "sunlight",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "sunlight"
+      ],
+      "latency_ms": 1148,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "Nước Rửa Chén Sunlight Thiên Nhiên Lô Hội Túi 2kg",
+        "Dầu gội đen óng ả Sunsilk chai 900g",
+        "Kem chống nắng Benew dành cho da mặt Collage"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G2-01",
+      "group": "G2",
+      "query": "coca lon",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "coca cola"
+      ],
+      "latency_ms": 1147,
+      "http_status": 200,
+      "confidence": 0.35,
+      "item_count": 3,
+      "top_items": [
+        "Nước giải khát không đường Coca Cola Light lon 330ml",
+        "Nước giải khát Coca Cola chai 1.5lít",
+        "Nước Giải Khát Coca-Cola Sleek 235ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G2-02",
+      "group": "G2",
+      "query": "pepsi chai",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "pepsi"
+      ],
+      "latency_ms": 1255,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "Nước giải khát không calo Pepsi 330ml",
+        "Nước giải khát có gas Pepsico chai 1.5 lít",
+        "Trà matcha Blendy sữa"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G2-03",
+      "group": "G2",
+      "query": "tiger lon",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "tiger"
+      ],
+      "latency_ms": 1058,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "TIGER Bia lon 250ml",
+        "Bia Tiger lon cao 330ml",
+        "Vỉ 3 búi bi Thiên Long TL089"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G2-04",
+      "group": "G2",
+      "query": "heineken chai",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "heineken"
+      ],
+      "latency_ms": 1235,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "Bia Heineken Silver thùng 24 lon x 330ml",
+        "Thùng 24 lon bia hơi Hà Nội 500ml",
+        "Thùng 24 lon bia Heineken 330ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G2-05",
+      "group": "G2",
+      "query": "hao hao ly",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": false,
+      "expected_brands": [
+        "hao hao",
+        "hảo hảo"
+      ],
+      "latency_ms": 1162,
+      "http_status": 200,
+      "confidence": 0.98,
+      "item_count": 3,
+      "top_items": [
+        "Xúc xích lắc phô mai bắp bơ Heo Cao Bồi 64g",
+        "Cháo SGFood bổ dưỡng tổ yến hạt sen lá dứa 240g",
+        "Xúc xích Heo Cao Bồi xốt trứng muối cay 15g"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G3-01",
+      "group": "G3",
+      "query": "coca 330ml",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "coca cola"
+      ],
+      "latency_ms": 1200,
+      "http_status": 200,
+      "confidence": 0.41,
+      "item_count": 3,
+      "top_items": [
+        "Nước giải khát không đường Coca Cola Light lon 330ml",
+        "Cốc nước Inochi Nagoya 350ml thấp",
+        "Lốc 6 lon nước giải khát Coca Cola 320ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G3-02",
+      "group": "G3",
+      "query": "pepsi 1.5l",
+      "expected_type": "needs_clarification",
+      "actual_type": "exact_match",
+      "pass": false,
+      "brand_hit": true,
+      "expected_brands": [
+        "pepsi"
+      ],
+      "latency_ms": 1132,
+      "http_status": 200,
+      "confidence": 0.99,
+      "item_count": 1,
+      "top_items": [
+        "Nước giải khát có gas Pepsico chai 1.5 lít"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G3-03",
+      "group": "G3",
+      "query": "lavie 500ml",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "lavie"
+      ],
+      "latency_ms": 1182,
+      "http_status": 200,
+      "confidence": 0.41,
+      "item_count": 3,
+      "top_items": [
+        "Thùng 12 lon Bia Budweiser 500ml",
+        "Dầu gội đầu PANTENE nước hoa hồng 530mL",
+        "Nước khoáng thiên nhiên Lavie chai 500ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G3-04",
+      "group": "G3",
+      "query": "vinamilk 1l",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "vinamilk"
+      ],
+      "latency_ms": 1162,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "Sữa tươi tiệt trùng Devondale nguyên chất 1L",
+        "Sữa tươi tiệt trùng Vinamilk không đường hộp 1 lít",
+        "Sữa thanh trùng Dalat Milk không đường 950ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G3-05",
+      "group": "G3",
+      "query": "th true milk 180ml",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "th true milk"
+      ],
+      "latency_ms": 1150,
+      "http_status": 200,
+      "confidence": 0.35,
+      "item_count": 2,
+      "top_items": [
+        "Lốc 8 hộp sữa lúa mạch Nestle Milo 180ml",
+        "Thùng 48 hộp sữa tươi tiệt trùng TH True Milk có đường 180ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G3-06",
+      "group": "G3",
+      "query": "sting 330ml",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "sting"
+      ],
+      "latency_ms": 1186,
+      "http_status": 200,
+      "confidence": 0.7,
+      "item_count": 2,
+      "top_items": [
+        "Nước tăng lực sting hương dâu lon 330ml",
+        "Lốc 6 lon nước giải khát Coca Cola 320ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G3-07",
+      "group": "G3",
+      "query": "oishi 40g",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": false,
+      "expected_brands": [
+        "oishi"
+      ],
+      "latency_ms": 1223,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "Snack khoai tây vị tảo biển O'Star gói 48g",
+        "Bánh que tôm Doakbua gói 55g",
+        "Snack vị cay Taokaenoi gói 32g"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G4-01",
+      "group": "G4",
+      "query": "bia",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "tiger",
+        "heineken",
+        "bia sai gon",
+        "bia sài gòn"
+      ],
+      "latency_ms": 1153,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 2,
+      "top_items": [
+        "Thùng 12 lon Bia Budweiser 500ml",
+        "TIGER Bia lon 250ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G4-02",
+      "group": "G4",
+      "query": "sữa tươi",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": false,
+      "expected_brands": [
+        "vinamilk",
+        "th true milk"
+      ],
+      "latency_ms": 1079,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "Lốc 8 hộp sữa lúa mạch Nestle Milo 180ml",
+        "MEADOW FRESH Sữa tươi tách béo 1L",
+        "Sữa Sôcôla Lúa Mạch SuSu - Lốc 6 Chai 80ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G4-03",
+      "group": "G4",
+      "query": "nước ngọt",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": false,
+      "expected_brands": [
+        "coca cola",
+        "pepsi",
+        "sprite"
+      ],
+      "latency_ms": 1141,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 2,
+      "top_items": [
+        "Nước ngọt coca chai 2.25 lít",
+        "Lốc 6 chai nước ngọt cam sữa 297ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G4-04",
+      "group": "G4",
+      "query": "nước suối",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "lavie",
+        "aquafina"
+      ],
+      "latency_ms": 1202,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 2,
+      "top_items": [
+        "Nước khoáng LaVie 5",
+        "Nước uống Aquafina chai 5L"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G4-05",
+      "group": "G4",
+      "query": "mì ăn liền",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": false,
+      "expected_brands": [
+        "hao hao",
+        "hảo hảo",
+        "omachi"
+      ],
+      "latency_ms": 1149,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "Mì ăn liền Koreno Jumbo vị kim chi Paldo túi 1kg",
+        "Mì ăn liền Bongoyang​​​​​​​ Hanil Food gói 200g",
+        "Mì ăn liền Koreno vị gà Paldo túi 1kg"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G4-06",
+      "group": "G4",
+      "query": "snack",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "oishi",
+        "poca"
+      ],
+      "latency_ms": 1176,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "Snack Hành Oishi gói35/39g",
+        "Snack que nhân sữa Akiko gói 160g",
+        "Snack Big sheet truyền thống 3.2g"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G4-07",
+      "group": "G4",
+      "query": "nước mắm",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "nam ngu",
+        "nam ngư"
+      ],
+      "latency_ms": 1223,
+      "http_status": 200,
+      "confidence": 0.37,
+      "item_count": 3,
+      "top_items": [
+        "Nước mắm Nam Ngư chai 1.2L",
+        "Nước xả làm mềm vải đậm đặc Comfort Bella túi 3,2L",
+        "Nước mắm Phú Quốc Thanh Quốc 35 độ đạm"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G5-01",
+      "group": "G5",
+      "query": "chai lớn",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [],
+      "latency_ms": 1082,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 2,
+      "top_items": [
+        "Nước khoáng LaVie 5",
+        "Nước uống Aquafina chai 5L"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G5-02",
+      "group": "G5",
+      "query": "lon nhỏ",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [],
+      "latency_ms": 1113,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 2,
+      "top_items": [
+        "Bia Sapporo lon 650ml",
+        "TIGER Bia lon 250ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G5-03",
+      "group": "G5",
+      "query": "hộp lớn",
+      "expected_type": "needs_clarification",
+      "actual_type": "exact_match",
+      "pass": false,
+      "brand_hit": true,
+      "expected_brands": [],
+      "latency_ms": 1084,
+      "http_status": 200,
+      "confidence": 0.95,
+      "item_count": 1,
+      "top_items": [
+        "Nước dừa đóng hộp Xanh Cocoxim hộp 1L"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G5-04",
+      "group": "G5",
+      "query": "gói nhỏ",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [],
+      "latency_ms": 1234,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "Snack Hành Oishi gói35/39g",
+        "Snack que nhân sữa Akiko gói 160g",
+        "Snack Big sheet truyền thống 3.2g"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G6-01",
+      "group": "G6",
+      "query": "bò húc",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": false,
+      "expected_brands": [
+        "red bull"
+      ],
+      "latency_ms": 1069,
+      "http_status": 200,
+      "confidence": 0.7,
+      "item_count": 3,
+      "top_items": [
+        "Nước tăng lực Rockstar lon 250ml",
+        "Chả giò rế Cầu Tre tôm cua (hải sản) 500g",
+        "Dao cạo râu Gillette Mach 3+"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G6-02",
+      "group": "G6",
+      "query": "mì tôm",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "hao hao",
+        "hảo hảo",
+        "omachi"
+      ],
+      "latency_ms": 1182,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "Mì gói ăn liền hai tôm chính hiệu Vifon thùng 30 gói x75g",
+        "HẢO HẢO Mì tôm chua cay Big 100g",
+        "Mì Koreno vị tôm gói 1kg"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G6-03",
+      "group": "G6",
+      "query": "coke",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "coca cola"
+      ],
+      "latency_ms": 1191,
+      "http_status": 200,
+      "confidence": 0.41,
+      "item_count": 3,
+      "top_items": [
+        "Nước giải khát không đường Coca Cola Light lon 330ml",
+        "Nước giải khát Coca Cola chai 1.5lít",
+        "Nước Giải Khát Coca-Cola Sleek 235ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G6-04",
+      "group": "G6",
+      "query": "nước rửa chén",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "sunlight"
+      ],
+      "latency_ms": 1241,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 2,
+      "top_items": [
+        "Nước Rửa Chén Sunlight Thiên Nhiên Lô Hội Túi 2kg",
+        "WMHOME Nước rửa chén chanh can 3.5L"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G6-05",
+      "group": "G6",
+      "query": "bột giặt",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": false,
+      "expected_brands": [
+        "omo"
+      ],
+      "latency_ms": 1189,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "Nước giặt xả Maxkleen thiên nhiên 3.6kg",
+        "BLUE Nước giặt xả đậm đặc hnước hoa 3.6L",
+        "GIFT Nước giặt hương nắng xuân 1,2kg"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G6-06",
+      "group": "G6",
+      "query": "tương ớt",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": false,
+      "expected_brands": [
+        "chinsu"
+      ],
+      "latency_ms": 1290,
+      "http_status": 200,
+      "confidence": 0.42,
+      "item_count": 3,
+      "top_items": [
+        "NAM DƯƠNG Tương Cà 500g",
+        "Dầu hướng dương Sloboda 1.8L",
+        "CHIN-SUTương ớt nguyên vị 2kg T4"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G7-01",
+      "group": "G7",
+      "query": "3 lon bia tiger",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "tiger"
+      ],
+      "latency_ms": 1160,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "Bia 333 Export thùng 24 lon x 330ml",
+        "Bia Tiger lon cao 330ml",
+        "TIGER Bia lon 250ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G7-02",
+      "group": "G7",
+      "query": "2 chai coca",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": false,
+      "expected_brands": [
+        "coca cola"
+      ],
+      "latency_ms": 1098,
+      "http_status": 200,
+      "confidence": 0.41,
+      "item_count": 2,
+      "top_items": [
+        "Nước ngọt coca chai 2.25 lít",
+        "Nước Giải Khát Coca-Cola Sleek 235ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G7-03",
+      "group": "G7",
+      "query": "5 gói mì hảo hảo",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": false,
+      "expected_brands": [
+        "hao hao",
+        "hảo hảo"
+      ],
+      "latency_ms": 1256,
+      "http_status": 200,
+      "confidence": 0.98,
+      "item_count": 3,
+      "top_items": [
+        "Cháo thịt bằm Vifon gói 70g",
+        "Cháo SGFood bổ dưỡng tổ yến hạt sen lá dứa 240g",
+        "Cháo gà Vifon gói 50g"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G7-04",
+      "group": "G7",
+      "query": "1 hộp sữa vinamilk",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "vinamilk"
+      ],
+      "latency_ms": 1154,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "VINAMILK Sữa tươi TT Dừa 180ml",
+        "Sữa tươi tiệt trùng Vinamilk có đường hộp 1 lít",
+        "VINAMILK Sữa tươi TT ko đường 110ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G8-01",
+      "group": "G8",
+      "query": "nước ngọt ít đường",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": false,
+      "expected_brands": [
+        "coca cola",
+        "pepsi",
+        "sprite"
+      ],
+      "latency_ms": 1372,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 2,
+      "top_items": [
+        "Nước ngọt coca chai 2.25 lít",
+        "Lốc 6 chai nước ngọt cam sữa 297ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G8-02",
+      "group": "G8",
+      "query": "bia không cồn",
+      "expected_type": "no_result",
+      "actual_type": "needs_clarification",
+      "pass": false,
+      "brand_hit": true,
+      "expected_brands": [],
+      "latency_ms": 1215,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "Thùng 12 lon Bia Budweiser 500ml",
+        "Bia Sapporo lon 650ml",
+        "BIA SÀI GÒN Bia Export premium lon330ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G8-03",
+      "group": "G8",
+      "query": "snack cao cấp",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "pass": true,
+      "brand_hit": true,
+      "expected_brands": [
+        "oishi",
+        "poca"
+      ],
+      "latency_ms": 1290,
+      "http_status": 200,
+      "confidence": 0.97,
+      "item_count": 3,
+      "top_items": [
+        "Snack Hành Oishi gói35/39g",
+        "Snack que nhân sữa Akiko gói 160g",
+        "Snack Big sheet truyền thống 3.2g"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G9-01",
+      "group": "G9",
+      "query": "iphone",
+      "expected_type": "no_result",
+      "actual_type": "needs_clarification",
+      "pass": false,
+      "brand_hit": true,
+      "expected_brands": [],
+      "latency_ms": 1147,
+      "http_status": 200,
+      "confidence": 0.9,
+      "item_count": 2,
+      "top_items": [
+        "Sữa tắm Lux botanicals hương phong lan quyến rũ chai 530g",
+        "PUREAIR xịt phòng nước hoa oải hương"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G9-02",
+      "group": "G9",
+      "query": "vitamin C",
+      "expected_type": "no_result",
+      "actual_type": "needs_clarification",
+      "pass": false,
+      "brand_hit": true,
+      "expected_brands": [],
+      "latency_ms": 1132,
+      "http_status": 200,
+      "confidence": 0.92,
+      "item_count": 3,
+      "top_items": [
+        "LIFEBUOY NRT vitamin sữa dưỡng ẩm 1kg",
+        "Trái cây sấy Vinamit gói 500g",
+        "Dao cạo râu Gillette Mach 3+"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G9-03",
+      "group": "G9",
+      "query": "áo thun nam",
+      "expected_type": "no_result",
+      "actual_type": "needs_clarification",
+      "pass": false,
+      "brand_hit": true,
+      "expected_brands": [],
+      "latency_ms": 1738,
+      "http_status": 200,
+      "confidence": 0.91,
+      "item_count": 3,
+      "top_items": [
+        "Nước mắm Nam Ngư chai 1.2L",
+        "Nước giặt quần áo em bé D-nee Lovely Sky​ can 3L",
+        "JM Mặt nạ cá tầm vàng dưỡng ẩm 30ml"
+      ],
+      "error": ""
+    },
+    {
+      "id": "G9-04",
+      "group": "G9",
+      "query": "sữa rửa mặt",
+      "expected_type": "no_result",
+      "actual_type": "needs_clarification",
+      "pass": false,
+      "brand_hit": true,
+      "expected_brands": [],
+      "latency_ms": 2263,
+      "http_status": 200,
+      "confidence": 0.9,
+      "item_count": 3,
+      "top_items": [
+        "Sữa rửa mặt tạo bọt Senka Perfect Whip Collagen In 120g",
+        "Sữa tắm Dove bóng mịn thơm mát chai 500g",
+        "Thau rửa mặt Inochi Notoro 32cm"
+      ],
+      "error": ""
+    }
+  ]
+}
