@@ -6,7 +6,6 @@ from pydantic import BaseModel
 class SearchItem(BaseModel):
     id: str
     name: str
-    quantity: int | None = None
     score: float | None = None
 
 

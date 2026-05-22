@@ -35,18 +35,19 @@ class RankerConfig:
     weight_packaging_match: float = 10.0
     weight_packaging_miss: float = -20.0
     weight_attribute: float = 10.0
-    weight_best_seller: float = 1.0
     weight_variant_penalty: float = 50.0
 
 
 # Per-category size-hint thresholds (ml for liquids, g for dry goods).
-# Keys are normalised category_norm values. "_default" is the fallback.
+# Keys MUST match category_norm values in the ES index exactly.
 SIZE_HINTS: Dict[str, Dict[str, float]] = {
-    "beverage_bottle":     {"large": 1000.0, "small": 350.0},
-    "beverage_can":        {"large": 500.0,  "small": 250.0},
-    "instant_noodle_pack": {"large": 100.0,  "small": 75.0},   # grams
-    "snack":               {"large": 200.0,  "small": 50.0},   # grams
-    "_default":            {"large": 1000.0, "small": 350.0},
+    "soft drink":    {"large": 1000.0, "small": 330.0},
+    "beer":          {"large": 1000.0, "small": 330.0},
+    "water":         {"large": 1500.0, "small": 500.0},
+    "milk":          {"large": 1000.0, "small": 200.0},
+    "instant noodle":{"large": 100.0,  "small": 75.0},   # grams
+    "snack":         {"large": 200.0,  "small": 50.0},   # grams
+    "_default":      {"large": 1000.0, "small": 350.0},
 }
 
 

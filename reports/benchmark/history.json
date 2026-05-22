@@ -140,5 +140,63 @@
     },
     "json_report": "2026-05-16_16-50-08_score-86pct.json",
     "md_report": "2026-05-16_16-50-08_score-86pct.md"
+  },
+  {
+    "run_id": "2026-05-22_15-25-19",
+    "test_cases_file": "/home/mbw1/Dev/order-ai/scripts/test_cases.md",
+    "score_pct": 88.68,
+    "pass": 47,
+    "fail": 6,
+    "total": 53,
+    "avg_latency_ms": 1270.39,
+    "avg_confidence": 0.747,
+    "failure_reasons": {
+      "expected no_result (out-of-catalog) but system returned needs_clarification with 3 items — hallucination": 6
+    },
+    "json_report": "2026-05-22_15-25-19_score-89pct.json",
+    "md_report": "2026-05-22_15-25-19_score-89pct.md"
+  },
+  {
+    "run_id": "2026-05-22_15-44-11",
+    "test_cases_file": "/home/mbw1/Dev/order-ai/scripts/test_cases.md",
+    "score_pct": 94.34,
+    "pass": 50,
+    "fail": 3,
+    "total": 53,
+    "avg_latency_ms": 1359.16,
+    "avg_confidence": 0.766,
+    "failure_reasons": {
+      "expected no_result (out-of-catalog) but system returned needs_clarification with 3 items — hallucination": 3
+    },
+    "json_report": "2026-05-22_15-44-11_score-94pct.json",
+    "md_report": "2026-05-22_15-44-11_score-94pct.md"
+  },
+  {
+    "run_id": "2026-05-22_15-53-57",
+    "test_cases_file": "/home/mbw1/Dev/order-ai/scripts/test_cases.md",
+    "score_pct": 92.45,
+    "pass": 49,
+    "fail": 4,
+    "total": 53,
+    "avg_latency_ms": 1388.69,
+    "avg_confidence": 0.768,
+    "failure_reasons": {
+      "expected no_result (out-of-catalog) but system returned needs_clarification with 3 items — hallucination": 4
+    },
+    "json_report": "2026-05-22_15-53-57_score-92pct.json",
+    "md_report": "2026-05-22_15-53-57_score-92pct.md"
+  },
+  {
+    "run_id": "2026-05-22_16-01-10",
+    "test_cases_file": "/home/mbw1/Dev/order-ai/scripts/test_cases.md",
+    "score_pct": 100.0,
+    "pass": 53,
+    "fail": 0,
+    "total": 53,
+    "avg_latency_ms": 1466.91,
+    "avg_confidence": 0.76,
+    "failure_reasons": {},
+    "json_report": "2026-05-22_16-01-10_score-100pct.json",
+    "md_report": "2026-05-22_16-01-10_score-100pct.md"
   }
 ]

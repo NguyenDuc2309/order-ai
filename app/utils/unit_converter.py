@@ -35,8 +35,3 @@ def normalize_size_unit(size_unit: str | None) -> str | None:
     return u
 
 
-def pack_count(unit_raw: str | None) -> int:
-    if not unit_raw:
-        return 1
-    unit = unit_raw.strip().lower()
-    return PACK_CONVERSIONS.get(unit, {}).get("count", 1)

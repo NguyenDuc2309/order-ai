@@ -151,13 +151,6 @@ def _extract_tags(name: str, mch4: str, mch5: str) -> list[str]:
     return list(dict.fromkeys(tags))
 
 
-def _is_best_seller(row: dict) -> bool:
-    try:
-        return int(row.get("available_quantity") or 0) > 30 and float(row.get("discount_rate") or 0) > 0
-    except (ValueError, TypeError):
-        return False
-
-
 def transform(row: dict) -> dict:
     name      = row.get("name", "")
     brand     = _normalize_spaces(row.get("brand", ""))
@@ -192,7 +185,6 @@ def transform(row: dict) -> dict:
         "pack_count":    pack_count,
         "uom_raw":       uom_raw,
         "tags":          [t for t in tags if t],
-        "is_best_seller":_is_best_seller(row),
         "seo_name":      row.get("seo_name", ""),
         "embed_text":    embed_text,
     }
@@ -235,7 +227,6 @@ def build_mapping(vector_dims: int) -> dict:
                 "pack_count":    {"type": "integer"},
                 "uom_raw":       {"type": "keyword"},
                 "tags":          {"type": "keyword"},
-                "is_best_seller":{"type": "boolean"},
                 "name_vector": {
                     "type": "dense_vector",
                     "dims": vector_dims,
