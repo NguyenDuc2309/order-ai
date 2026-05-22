@@ -6,7 +6,7 @@ from app.services.ranker.scorer import ScoredRow
 
 def make_row(pid: str, score: float, satisfied: int, specified: int, hard: bool, soft: bool):
     return ScoredRow(
-        product={"id": pid, "name": pid, "size_value": 330, "size_unit": "ml", "is_best_seller": False},
+        product={"id": pid, "name": pid, "size_value": 330, "size_unit": "ml"},
         raw_es_score=1.0,
         structural_score=score,
         audit=AuditResult(
@@ -17,7 +17,6 @@ def make_row(pid: str, score: float, satisfied: int, specified: int, hard: bool,
             attributes=MatchState.NOT_SPECIFIED,
             attributes_ratio=0.0,
             must_not=MatchState.NOT_SPECIFIED,
-            qty_extracted=1,
             hard_pass=hard,
             soft_pass=soft,
             satisfied_count=satisfied,
@@ -27,7 +26,8 @@ def make_row(pid: str, score: float, satisfied: int, specified: int, hard: bool,
 
 
 def test_exact_match_case() -> None:
-    extracted = ExtractionResult(product_name="coca", is_exact_request=True)
+    # is_specific dựa vào brand/unit_raw/size_value (P1 — FACT, không phán đoán)
+    extracted = ExtractionResult(product_name="coca", brand="coca cola", unit_raw="lon")
     rows = [make_row("a", 100.0, 4, 4, True, True), make_row("b", 60.0, 1, 4, False, False)]
     decision = Decider().decide(rows, extracted)
     assert decision.type == "exact_match"

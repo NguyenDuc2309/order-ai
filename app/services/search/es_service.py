@@ -28,7 +28,6 @@ class ElasticsearchService:
                         "packaging": source.get("packaging"),
                         "pack_count": source.get("pack_count", 1),
                         "tags": source.get("tags", []),
-                        "is_best_seller": source.get("is_best_seller", False),
                     },
                     "score": float(hit.get("_score", 0.0)),
                 }

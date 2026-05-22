@@ -1,3 +1,4 @@
+import re
 from dataclasses import dataclass
 
 from app.core.config import config
@@ -6,12 +7,32 @@ from app.services.ranker.constraint_audit import ConstraintAuditor, AuditResult,
 
 # Tokens that signal a "special variant" — if user did not mention any of these,
 # products containing them are penalised (variant hallucination guard).
+# Multi-word tokens (Vietnamese phrases) are matched as substrings; single-word tokens
+# are matched at word boundaries to prevent false positives.
 VARIANT_TOKENS = {
     "light", "zero", "diet", "không đường", "không calo",
     "tách béo", "ít béo", "không béo",
     "crystal", "silver", "không cồn", "lite",
     "sparkling",
 }
+
+_SINGLE_WORD_VARIANT_RE = re.compile(
+    r"\b(" + "|".join(re.escape(t) for t in VARIANT_TOKENS if " " not in t) + r")\b",
+    re.IGNORECASE,
+)
+_MULTI_WORD_VARIANTS = [t for t in VARIANT_TOKENS if " " in t]
+
+
+def _has_variant_token(text: str) -> bool:
+    """Return True if text contains any variant token (word-boundary for single words)."""
+    if _SINGLE_WORD_VARIANT_RE.search(text):
+        return True
+    return any(t in text for t in _MULTI_WORD_VARIANTS)
+
+
+def _query_mentions_variant(query: str) -> bool:
+    """Return True if the user query itself mentions a variant keyword."""
+    return _has_variant_token(query)
 
 
 @dataclass
@@ -61,15 +82,13 @@ class StructuralScorer:
                 audit.packaging, self.cfg.weight_packaging_match, self.cfg.weight_packaging_miss
             )
             structural_score += (audit.attributes_ratio * len(extraction.attributes)) * self.cfg.weight_attribute
-            if bool(product.get("is_best_seller")):
-                structural_score += self.cfg.weight_best_seller
 
             # Variant penalty: if the user did NOT mention any variant keyword,
             # penalise products whose name contains a variant token.
             query_lower = (extraction.product_name or "").lower()
-            if not any(vt in query_lower for vt in VARIANT_TOKENS):
+            if not _query_mentions_variant(query_lower):
                 product_name_lower = product.get("name", "").lower()
-                if any(vt in product_name_lower for vt in VARIANT_TOKENS):
+                if _has_variant_token(product_name_lower):
                     structural_score -= self.cfg.weight_variant_penalty
 
             scored.append(

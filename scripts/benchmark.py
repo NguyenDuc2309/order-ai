@@ -32,7 +32,6 @@ class BenchmarkCase:
     expected_type: str          # exact | clarify | no_result
     required_keywords: list[str]  # +term: ít nhất 1 kết quả phải chứa
     excluded_keywords: list[str]  # !term: không kết quả nào được chứa
-    expected_qty: int | None      # qty=N: items[0].quantity phải bằng N
 
 
 @dataclass
@@ -47,8 +46,6 @@ class CaseResult:
     fail_reasons: list[str]  # mô tả chi tiết tại sao fail
     required_keywords: list[str]
     excluded_keywords: list[str]
-    expected_qty: int | None
-    actual_qty: int | None
     latency_ms: float
     http_status: int
     confidence: float
@@ -68,12 +65,12 @@ _TYPE_MAP = {
 }
 
 
-def parse_expected(raw: str) -> tuple[str, list[str], list[str], int | None]:
+def parse_expected(raw: str) -> tuple[str, list[str], list[str]]:
     """Parse the Expected column DSL.
 
-    Syntax: <type> [+term] [!term] [qty=N]
+    Syntax: <type> [+term] [!term]
     Underscores in terms are replaced with spaces.
-    Returns (expected_type, required_keywords, excluded_keywords, expected_qty).
+    Returns (expected_type, required_keywords, excluded_keywords).
     """
     tokens = raw.strip().split()
     if not tokens:
@@ -86,17 +83,14 @@ def parse_expected(raw: str) -> tuple[str, list[str], list[str], int | None]:
 
     required: list[str] = []
     excluded: list[str] = []
-    expected_qty: int | None = None
 
     for tok in tokens[1:]:
         if tok.startswith("+"):
             required.append(tok[1:].replace("_", " "))
         elif tok.startswith("!"):
             excluded.append(tok[1:].replace("_", " "))
-        elif tok.lower().startswith("qty="):
-            expected_qty = int(tok.split("=", 1)[1])
 
-    return expected_type, required, excluded, expected_qty
+    return expected_type, required, excluded
 
 
 # ---------------------------------------------------------------------------
@@ -160,7 +154,7 @@ def load_test_cases(path: Path) -> list[BenchmarkCase]:
             continue
 
         try:
-            expected_type, required, excluded, qty = parse_expected(expected_raw)
+            expected_type, required, excluded = parse_expected(expected_raw)
         except ValueError as exc:
             print(f"[WARN] Skipping row {case_id!r}: {exc}")
             continue
@@ -173,7 +167,6 @@ def load_test_cases(path: Path) -> list[BenchmarkCase]:
             expected_type=expected_type,
             required_keywords=required,
             excluded_keywords=excluded,
-            expected_qty=qty,
         ))
 
     return cases
@@ -239,7 +232,6 @@ def score_case(
     fail_reasons: list[str] = []
     required_hits: dict[str, bool] = {}
     excluded_hits: dict[str, bool] = {}
-    actual_qty: int | None = None
 
     # 1. HTTP error → always FAIL
     if http_status != 200 or actual_type == "error":
@@ -275,12 +267,6 @@ def score_case(
                 excluded_hits[kw] = any(kw_norm in name for name in top_names_norm)
                 if excluded_hits[kw]:
                     fail_reasons.append(f"excluded variant '{kw}' appeared in results")
-            # Quantity
-            if case.expected_qty is not None:
-                first_item = items[0] if items else {}
-                actual_qty = first_item.get("quantity")
-                if actual_qty != case.expected_qty:
-                    fail_reasons.append(f"qty={actual_qty}≠expected {case.expected_qty}")
 
     pass_ = not fail_reasons
 
@@ -295,8 +281,6 @@ def score_case(
         fail_reasons=fail_reasons,
         required_keywords=case.required_keywords,
         excluded_keywords=case.excluded_keywords,
-        expected_qty=case.expected_qty,
-        actual_qty=actual_qty,
         latency_ms=round(latency_ms, 2),
         http_status=http_status,
         confidence=float(response.get("confidence", 0.0)) if response else 0.0,
@@ -436,19 +420,18 @@ def render_markdown(payload: dict) -> str:
         "",
         "## Cases",
         "",
-        "| ID | Group | Query | Expected type | Actual type | Pass | Conf | Qty exp→act | Fail reasons | Top items |",
-        "|---|---|---|---|---|---|---:|---|---|---|",
+        "| ID | Group | Query | Expected type | Actual type | Pass | Conf | Fail reasons | Top items |",
+        "|---|---|---|---|---|---|---:|---|---|",
     ]
     for r in payload["results"]:
         top = "<br>".join(r["top_items"])
         fail_str = "; ".join(r["fail_reasons"]) if r["fail_reasons"] else "—"
         conf = f"{r['confidence']:.2f}" if r["confidence"] else "—"
-        qty_str = f"{r['expected_qty']}→{r['actual_qty']}" if r["expected_qty"] is not None else "—"
         pass_str = "✓" if r["pass"] else "✗"
         lines.append(
             f"| {r['id']} | {r['group']} | {r['query']} "
             f"| {r['expected_type']} | {r['actual_type']} "
-            f"| {pass_str} | {conf} | {qty_str} "
+            f"| {pass_str} | {conf} "
             f"| {fail_str} | {top} |"
         )
     return "\n".join(lines) + "\n"

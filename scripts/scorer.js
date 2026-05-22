@@ -33,8 +33,8 @@ const _TYPE_MAP = {
 };
 
 /**
- * @param {string} raw  e.g. "exact +coca +lon !light !zero qty=2"
- * @returns {{ expectedType, required: string[], excluded: string[], qty: number|null }}
+ * @param {string} raw  e.g. "exact +coca +lon !light !zero"
+ * @returns {{ expectedType, required: string[], excluded: string[] }}
  */
 function parseDsl(raw) {
   const tokens = raw.trim().split(/\s+/);
@@ -43,15 +43,13 @@ function parseDsl(raw) {
 
   const required = [];
   const excluded = [];
-  let qty = null;
 
   for (const tok of tokens.slice(1)) {
-    if (tok.startsWith('+'))           required.push(tok.slice(1).replace(/_/g, ' '));
-    else if (tok.startsWith('!'))      excluded.push(tok.slice(1).replace(/_/g, ' '));
-    else if (/^qty=\d+$/i.test(tok))   qty = parseInt(tok.split('=')[1], 10);
+    if (tok.startsWith('+'))      required.push(tok.slice(1).replace(/_/g, ' '));
+    else if (tok.startsWith('!')) excluded.push(tok.slice(1).replace(/_/g, ' '));
   }
 
-  return { expectedType, required, excluded, qty };
+  return { expectedType, required, excluded };
 }
 
 // ---------------------------------------------------------------------------
@@ -65,7 +63,7 @@ function parseDsl(raw) {
  * @param {string} text  Full text of test_cases.md
  * @returns {BenchmarkCase[]}
  *
- * @typedef {{ id, group, query, notes, expectedType, required, excluded, qty }} BenchmarkCase
+ * @typedef {{ id, group, query, notes, expectedType, required, excluded }} BenchmarkCase
  */
 function parseMdTestCases(text) {
   const cases = [];
@@ -98,7 +96,7 @@ function parseMdTestCases(text) {
     if (!query || !expected) continue;
 
     try {
-      const { expectedType, required, excluded, qty } = parseDsl(expected);
+      const { expectedType, required, excluded } = parseDsl(expected);
       cases.push({
         id:           get(ci.id)    || `C${String(cases.length + 1).padStart(3, '0')}`,
         group:        get(ci.group) || 'Ungrouped',
@@ -107,7 +105,6 @@ function parseMdTestCases(text) {
         expectedType,
         required,
         excluded,
-        qty,
       });
     } catch (e) {
       console.warn('[scorer] Skipping row:', e.message);
@@ -134,7 +131,7 @@ const TOP_N = 5;
  *   2. expected=no_result (G7): actual must be no_result; else FAIL (hallucination)
  *   3. expected=exact/clarify:
  *      - actual=no_result → PASS (honest "not in catalog")
- *      - actual has items → check required+, excluded!, and qty=
+ *      - actual has items → check required+ and excluded!
  *      - type mismatch (exact ↔ clarify) is informational, not a fail
  *
  * @param {BenchmarkCase} tc
@@ -150,7 +147,6 @@ function scoreCase(tc, resp, latencyMs, httpStatus, error = '') {
   const topNames = topRaw.map(it => normalizeVi(it.name ?? ''));
   const topDisp  = topRaw.map(it => String(it.name ?? ''));
   const actualType = resp?.type ?? (error ? 'error' : 'unknown');
-  const actualQty  = items[0]?.quantity ?? null;
 
   const failReasons = [];
   const requiredHits = {};
@@ -182,9 +178,6 @@ function scoreCase(tc, resp, latencyMs, httpStatus, error = '') {
         excludedHits[kw] = topNames.some(n => n.includes(normalizeVi(kw)));
         if (excludedHits[kw]) failReasons.push(`excluded variant "${kw}" appeared in results`);
       }
-      if (tc.qty !== null && actualQty !== tc.qty) {
-        failReasons.push(`qty: got ${actualQty}, want ${tc.qty}`);
-      }
     }
   }
 
@@ -201,7 +194,6 @@ function scoreCase(tc, resp, latencyMs, httpStatus, error = '') {
     latencyMs:    Math.round(latencyMs),
     httpStatus,
     topItems:     topDisp,
-    actualQty,
     error,
   };
 }

@@ -32,12 +32,10 @@ class GeminiParser(BaseExtractor):
         # Use the raw query as product_name so ES can still attempt BM25 search.
         return {
             "product_name": query_text.strip() or "",
-            "quantity": 1,
             "unit_raw": None,
             "size_value": None,
             "size_unit": None,
             "size_hint": None,
             "attributes": [],
             "must_not": [],
-            "is_exact_request": False,
         }

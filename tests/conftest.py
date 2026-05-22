@@ -8,8 +8,7 @@ def sample_extraction() -> ExtractionResult:
     return ExtractionResult(
         product_name="coca",
         brand="coca cola",
-        category="Soft Drink",
-        quantity=1,
+        category="soft drink",
         unit_raw="lon",
     )
 
@@ -20,7 +19,7 @@ def sample_product() -> dict:
         "id": "sku-1",
         "name": "Coca Cola lon 330ml",
         "brand_norm": "coca cola",
-        "category": "Soft Drink",
+        "category": "soft drink",
         "category_norm": "soft drink",
         "packaging": "lon",
         "tags": ["zero", "diet"],

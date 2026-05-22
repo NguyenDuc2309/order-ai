@@ -6,8 +6,7 @@ def test_audit_hard_pass_for_coca_can() -> None:
     extraction = ExtractionResult(
         product_name="coca",
         brand="coca cola",
-        category="Soft Drink",
-        quantity=2,
+        category="soft drink",
         unit_raw="lon",
     )
     product = {
@@ -25,8 +24,7 @@ def test_audit_must_not_mismatch() -> None:
     extraction = ExtractionResult(
         product_name="coca",
         brand="coca cola",
-        category="Soft Drink",
-        quantity=2,
+        category="soft drink",
         unit_raw="lon",
         must_not=["light"],
     )
@@ -41,7 +39,7 @@ def test_audit_must_not_mismatch() -> None:
 
 
 def test_audit_out_of_catalog_like_query() -> None:
-    extraction = ExtractionResult(product_name="iphone", brand="iphone", category="Phone")
+    extraction = ExtractionResult(product_name="iphone", brand="iphone", category="electronics")
     product = {
         "name": "Sữa tắm Lux",
         "brand_norm": "lux",

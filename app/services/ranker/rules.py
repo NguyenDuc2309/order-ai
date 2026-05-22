@@ -7,7 +7,7 @@ def apply_defaults(extracted: ExtractionResult) -> ExtractionResult:
     extracted.unit_raw = normalize_unit(extracted.unit_raw)     # packaging: thùng→lon
     extracted.size_unit = normalize_size_unit(extracted.size_unit)  # volume: lít→l, ml→ml
 
-    # 2. Size Hint calculation
+    # 2. Size hint — tự tính nếu user đã cho size_value nhưng chưa có size_hint
     if extracted.size_hint is None and extracted.size_value is not None and extracted.size_unit is not None:
         size_ml = value_to_ml(extracted.size_value, extracted.size_unit)
         if size_ml >= 1000:

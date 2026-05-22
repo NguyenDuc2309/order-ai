@@ -25,7 +25,6 @@ class AuditResult:
     attributes: MatchState
     attributes_ratio: float
     must_not: MatchState
-    qty_extracted: int
     hard_pass: bool
     soft_pass: bool
     satisfied_count: int
@@ -137,9 +136,10 @@ class ConstraintAuditor:
                 must_not_state = MatchState.MATCH
                 satisfied_count += 1
 
+        # category là SUY ĐOÁN của LLM → không gate quyết định (P1).
+        # Category chỉ ảnh hưởng scoring (soft boost/penalty trong scorer).
         hard_pass = (
             brand_state in (MatchState.MATCH, MatchState.NOT_SPECIFIED)
-            and category_state in (MatchState.MATCH, MatchState.NOT_SPECIFIED)
             and must_not_state in (MatchState.MATCH, MatchState.NOT_SPECIFIED)
         )
         soft_pass = hard_pass and (
@@ -155,7 +155,6 @@ class ConstraintAuditor:
             attributes=attrs_state,
             attributes_ratio=attributes_ratio,
             must_not=must_not_state,
-            qty_extracted=max(1, extraction.quantity),
             hard_pass=hard_pass,
             soft_pass=soft_pass,
             satisfied_count=satisfied_count,

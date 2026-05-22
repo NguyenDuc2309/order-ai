@@ -50,11 +50,10 @@ class RankingEngine:
                     SearchItem(
                         id=top.product["id"],
                         name=top.product["name"],
-                        quantity=extracted.quantity,
                         score=top.structural_score,
                     )
                 ],
-                message=f"Đã chọn {top.product['name']} và thêm {extracted.quantity} sản phẩm vào giỏ.",
+                message=f"Tìm thấy sản phẩm phù hợp: {top.product['name']}.",
             )
         if decision.type == "no_result":
             return SearchResponse(
@@ -72,12 +71,11 @@ class RankingEngine:
                 SearchItem(
                     id=row.product["id"],
                     name=row.product["name"],
-                    quantity=extracted.quantity,
                     score=row.structural_score,
                 )
                 for row in decision.items
             ],
-            message="Mình tìm thấy vài lựa chọn gần nhất, bạn chọn giúp mình sản phẩm phù hợp nhé.",
+            message="Tìm thấy một số sản phẩm phù hợp, bạn chọn giúp mình sản phẩm nào nhé.",
         )
 
     def _log_audit(self, extracted: ExtractionResult, top, decision: Decision, query: str) -> None:
