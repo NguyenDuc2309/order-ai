@@ -1,0 +1,1288 @@
+{
+  "run_id": "2026-06-08_10-57-24",
+  "api_url": "http://localhost:8001/api/v1/search/product",
+  "test_cases_file": "/home/mbw1/Dev/order-ai/scripts/test_cases.md",
+  "summary": {
+    "total": 53,
+    "pass": 47,
+    "fail": 6,
+    "score_pct": 88.68,
+    "avg_latency_ms": 3782.26,
+    "avg_confidence": 0.772,
+    "avg_confidence_pass": 0.772,
+    "avg_confidence_fail": 0.773,
+    "failure_reasons": {
+      "required '?' not in top results — system returned wrong items": 3,
+      "expected no_result (out-of-catalog) but system returned needs_clarification with 3 items — hallucination": 3
+    },
+    "groups": {
+      "Ungrouped": {
+        "total": 53,
+        "pass": 47,
+        "fail": 6,
+        "avg_confidence": 0.772
+      }
+    }
+  },
+  "results": [
+    {
+      "id": "G1-01",
+      "group": "Ungrouped",
+      "query": "bò húc",
+      "notes": "Tiếng lóng Red Bull",
+      "expected_type": "needs_clarification",
+      "actual_type": "no_result",
+      "fail_reasons": [],
+      "required_keywords": [
+        "red bull"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 2759.5,
+      "http_status": 200,
+      "confidence": 0.85,
+      "item_count": 0,
+      "top_items": [],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G1-02",
+      "group": "Ungrouped",
+      "query": "coke",
+      "notes": "English nickname",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "coca"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 2238.35,
+      "http_status": 200,
+      "confidence": 0.8,
+      "item_count": 3,
+      "top_items": [
+        "Lốc 6 lon nước giải khát Coca Cola 320ml",
+        "Nước giải khát Coca Cola chai 1.5lít",
+        "Kẹo dẻo Playmore cuộn vị cola 21g"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G1-03",
+      "group": "Ungrouped",
+      "query": "333",
+      "notes": "Brand = số",
+      "expected_type": "needs_clarification",
+      "actual_type": "no_result",
+      "fail_reasons": [],
+      "required_keywords": [
+        "333"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 3083.28,
+      "http_status": 200,
+      "confidence": 0.65,
+      "item_count": 0,
+      "top_items": [],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G1-04",
+      "group": "Ungrouped",
+      "query": "mì tôm",
+      "notes": "Tiếng lóng mì ăn liền",
+      "expected_type": "needs_clarification",
+      "actual_type": "no_result",
+      "fail_reasons": [],
+      "required_keywords": [
+        "mì"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 4566.55,
+      "http_status": 200,
+      "confidence": 0.72,
+      "item_count": 0,
+      "top_items": [],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G1-05",
+      "group": "Ungrouped",
+      "query": "tương ớt",
+      "notes": "Gia vị",
+      "expected_type": "needs_clarification",
+      "actual_type": "no_result",
+      "fail_reasons": [],
+      "required_keywords": [
+        "tương ớt"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 2239.72,
+      "http_status": 200,
+      "confidence": 0.72,
+      "item_count": 0,
+      "top_items": [],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G1-06",
+      "group": "Ungrouped",
+      "query": "bò húc lon lớn",
+      "notes": "Catalog chỉ có Red Bull chai (150ml/145ml) — không có lon → bỏ +lon",
+      "expected_type": "needs_clarification",
+      "actual_type": "no_result",
+      "fail_reasons": [],
+      "required_keywords": [
+        "red bull"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 3882.24,
+      "http_status": 200,
+      "confidence": 0.85,
+      "item_count": 0,
+      "top_items": [],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G2-01",
+      "group": "Ungrouped",
+      "query": "coca lon",
+      "notes": "Brand + packaging",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "coca",
+        "lon"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 3681.67,
+      "http_status": 200,
+      "confidence": 0.75,
+      "item_count": 3,
+      "top_items": [
+        "Nước giải khát Coca Cola lon 320ml",
+        "Nước giải khát Coca Cola chai 1.5lít",
+        "Kẹo dẻo Playmore cuộn vị cola 21g"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G2-02",
+      "group": "Ungrouped",
+      "query": "tiger lon",
+      "notes": "Tiger dạng lon",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "tiger",
+        "lon"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 2669.05,
+      "http_status": 200,
+      "confidence": 0.77,
+      "item_count": 3,
+      "top_items": [
+        "TIGER Bia lon 250ml",
+        "Nước ion I-On Life 450ml",
+        "Màu nước Thiên Long Waco 03"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G2-03",
+      "group": "Ungrouped",
+      "query": "sữa hộp vinamilk",
+      "notes": "Hộp giấy",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "vinamilk",
+        "hộp"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 3210.92,
+      "http_status": 200,
+      "confidence": 0.75,
+      "item_count": 3,
+      "top_items": [
+        "Sữa tươi tiệt trùng Vinamilk có đường hộp 1 lít",
+        "VINAMILK Sữa tươi TT ko đường 110ml",
+        "Sữa tươi tiệt trùng Vinamilk ít đường hộp 1 lít"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G2-04",
+      "group": "Ungrouped",
+      "query": "heineken thùng",
+      "notes": "Thùng rõ ràng",
+      "expected_type": "exact_match",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [
+        "required 'thùng' not in top results — system returned wrong items"
+      ],
+      "required_keywords": [
+        "heineken",
+        "thùng"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 2947.59,
+      "http_status": 200,
+      "confidence": 0.77,
+      "item_count": 3,
+      "top_items": [
+        "Bia Heineken lon 330ml",
+        "Bia Budweiser lon 500ml",
+        "Bia Heineken 0.0 Sleek 330ml"
+      ],
+      "error": "",
+      "pass": false
+    },
+    {
+      "id": "G2-05",
+      "group": "Ungrouped",
+      "query": "hảo hảo ly",
+      "notes": "Hảo Hảo không có dạng ly/cốc trong catalog",
+      "expected_type": "no_result",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [
+        "expected no_result (out-of-catalog) but system returned needs_clarification with 3 items — hallucination"
+      ],
+      "required_keywords": [],
+      "excluded_keywords": [],
+      "latency_ms": 3694.01,
+      "http_status": 200,
+      "confidence": 0.83,
+      "item_count": 3,
+      "top_items": [
+        "HẢO HẢO Mì xào hương vị hải sản 72g",
+        "Cháo SGFood bổ dưỡng tổ yến hạt sen lá dứa 240g",
+        "Mì Koreno jumbo hải sản túi 1kg"
+      ],
+      "error": "",
+      "pass": false
+    },
+    {
+      "id": "G2-06",
+      "group": "Ungrouped",
+      "query": "bia lon sài gòn",
+      "notes": "Bia SG lon",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "sài gòn",
+        "lon"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 2987.89,
+      "http_status": 200,
+      "confidence": 0.75,
+      "item_count": 3,
+      "top_items": [
+        "Bia Sài Gòn Gold sleek lon 330ml",
+        "Bia Sapporo lon 650ml",
+        "TIGER Bia lon 250ml"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G2-07",
+      "group": "Ungrouped",
+      "query": "lốc 6 coca",
+      "notes": "pack_count bỏ",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "coca"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 2709.13,
+      "http_status": 200,
+      "confidence": 0.75,
+      "item_count": 3,
+      "top_items": [
+        "Nước giải khát Coca Cola lon 320ml",
+        "Nước giải khát Coca Cola chai 1.5lít",
+        "Kẹo dẻo Playmore cuộn vị cola 21g"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G2-08",
+      "group": "Ungrouped",
+      "query": "nước mắm chai",
+      "notes": "Nước mắm chai",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "nước mắm",
+        "chai"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 3387.62,
+      "http_status": 200,
+      "confidence": 0.75,
+      "item_count": 3,
+      "top_items": [
+        "Nước mắm Nam Ngư chai 900ml",
+        "Nước tương Kikkoman chai 150ml",
+        "Nước mắm Nam Ngư chai 750ml"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G3-01",
+      "group": "Ungrouped",
+      "query": "2 lon coca",
+      "notes": "Qty bỏ; variant exclude",
+      "expected_type": "exact_match",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "coca",
+        "lon"
+      ],
+      "excluded_keywords": [
+        "light",
+        "zero",
+        "không đường"
+      ],
+      "latency_ms": 2994.86,
+      "http_status": 200,
+      "confidence": 0.75,
+      "item_count": 3,
+      "top_items": [
+        "Nước giải khát Coca Cola lon 320ml",
+        "Nước giải khát Coca Cola chai 1.5lít",
+        "Kẹo dẻo Playmore cuộn vị cola 21g"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G3-02",
+      "group": "Ungrouped",
+      "query": "2 thùng bia heineken",
+      "notes": "Thùng rõ",
+      "expected_type": "exact_match",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [
+        "required 'thùng' not in top results — system returned wrong items"
+      ],
+      "required_keywords": [
+        "heineken",
+        "thùng"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 3272.03,
+      "http_status": 200,
+      "confidence": 0.77,
+      "item_count": 3,
+      "top_items": [
+        "Bia Heineken lon 330ml",
+        "Bia Budweiser lon 500ml",
+        "Bia Heineken 0.0 Sleek 330ml"
+      ],
+      "error": "",
+      "pass": false
+    },
+    {
+      "id": "G3-03",
+      "group": "Ungrouped",
+      "query": "4 hộp sữa vinamilk 1l",
+      "notes": "Size 1L scoring",
+      "expected_type": "exact_match",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "vinamilk",
+        "hộp"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 3265.48,
+      "http_status": 200,
+      "confidence": 0.75,
+      "item_count": 3,
+      "top_items": [
+        "Sữa tươi tiệt trùng Vinamilk có đường hộp 1 lít",
+        "VINAMILK Sữa tươi TT ko đường 110ml",
+        "Sữa tươi tiệt trùng Vinamilk ít đường hộp 1 lít"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G3-04",
+      "group": "Ungrouped",
+      "query": "2 chai coca lớn",
+      "notes": "size_hint=large; chai ≠ lon",
+      "expected_type": "exact_match",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "coca",
+        "chai"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 4747.75,
+      "http_status": 200,
+      "confidence": 0.83,
+      "item_count": 3,
+      "top_items": [
+        "Nước giải khát Coca Cola chai 1.5lít",
+        "Kẹo dẻo Playmore cuộn vị cola 21g",
+        "Nước giải khát có gas Coca Cola chai 390ml"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G3-05",
+      "group": "Ungrouped",
+      "query": "1 thùng coca",
+      "notes": "Catalog chỉ có Coca Zero thùng (10011651T) — Coca thường không có uom=Thùng",
+      "expected_type": "no_result",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [
+        "expected no_result (out-of-catalog) but system returned needs_clarification with 3 items — hallucination"
+      ],
+      "required_keywords": [],
+      "excluded_keywords": [],
+      "latency_ms": 3128.28,
+      "http_status": 200,
+      "confidence": 0.75,
+      "item_count": 3,
+      "top_items": [
+        "Nước giải khát Coca Cola lon 320ml",
+        "Nước giải khát Coca Cola chai 1.5lít",
+        "Kẹo dẻo Playmore cuộn vị cola 21g"
+      ],
+      "error": "",
+      "pass": false
+    },
+    {
+      "id": "G3-06",
+      "group": "Ungrouped",
+      "query": "heineken lon 330ml",
+      "notes": "Exact size match",
+      "expected_type": "exact_match",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "heineken",
+        "lon"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 3392.04,
+      "http_status": 200,
+      "confidence": 0.77,
+      "item_count": 3,
+      "top_items": [
+        "Bia Heineken lon 330ml",
+        "Thùng 24 chai bia Corona Extra 355ml/330ml",
+        "Bia Heineken 0.0 Sleek 330ml"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G3-07",
+      "group": "Ungrouped",
+      "query": "thùng 24 lon tiger",
+      "notes": "24 là pack_count",
+      "expected_type": "exact_match",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [
+        "required 'thùng' not in top results — system returned wrong items"
+      ],
+      "required_keywords": [
+        "tiger",
+        "thùng"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 4373.78,
+      "http_status": 200,
+      "confidence": 0.77,
+      "item_count": 3,
+      "top_items": [
+        "TIGER Bia lon 250ml",
+        "Bia Tiger lon cao 330ml",
+        "Bia Tiger Soju Dưa lưới lon sleek 330ml"
+      ],
+      "error": "",
+      "pass": false
+    },
+    {
+      "id": "G3-08",
+      "group": "Ungrouped",
+      "query": "sữa tươi tiệt trùng vinamilk hộp nhỏ",
+      "notes": "size_hint=small",
+      "expected_type": "exact_match",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "vinamilk",
+        "hộp"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 6780.03,
+      "http_status": 200,
+      "confidence": 0.75,
+      "item_count": 3,
+      "top_items": [
+        "Sữa tươi tiệt trùng Vinamilk có đường hộp 1 lít",
+        "Lốc 4 hộp sữa tươi tiệt trùng hương dâu Vinamilk 110ml",
+        "Sữa tươi tiệt trùng Vinamilk ít đường hộp 1 lít"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G4-01",
+      "group": "Ungrouped",
+      "query": "nước mắm",
+      "notes": "Category thuần",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "nước mắm"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 3213.38,
+      "http_status": 200,
+      "confidence": 0.75,
+      "item_count": 3,
+      "top_items": [
+        "Nước mắm Nam Ngư chai 750ml",
+        "Nước chấm Nam Ngư siêu tiết kiệm can 4,8L",
+        "Mận đá đường"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G4-02",
+      "group": "Ungrouped",
+      "query": "bia lon",
+      "notes": "Danh mục + uom",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "bia",
+        "lon"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 2698.84,
+      "http_status": 200,
+      "confidence": 0.75,
+      "item_count": 3,
+      "top_items": [
+        "BIA SÀI GÒN Bia Export premium lon330ml",
+        "Bia Sapporo lon 650ml",
+        "TIGER Bia lon 250ml"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G4-03",
+      "group": "Ungrouped",
+      "query": "nước suối không có ga",
+      "notes": "must_not phải fire",
+      "expected_type": "needs_clarification",
+      "actual_type": "no_result",
+      "fail_reasons": [],
+      "required_keywords": [
+        "nước suối"
+      ],
+      "excluded_keywords": [
+        "có ga",
+        "sparkling"
+      ],
+      "latency_ms": 9023.89,
+      "http_status": 200,
+      "confidence": 0.8,
+      "item_count": 0,
+      "top_items": [],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G4-04",
+      "group": "Ungrouped",
+      "query": "sữa tươi ít béo",
+      "notes": "Attribute \"ít béo\"",
+      "expected_type": "needs_clarification",
+      "actual_type": "no_result",
+      "fail_reasons": [],
+      "required_keywords": [
+        "sữa",
+        "ít béo"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 5558.55,
+      "http_status": 200,
+      "confidence": 0.8,
+      "item_count": 0,
+      "top_items": [],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G4-05",
+      "group": "Ungrouped",
+      "query": "snack oishi",
+      "notes": "Danh mục + brand",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "oishi"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 3151.78,
+      "http_status": 200,
+      "confidence": 0.77,
+      "item_count": 3,
+      "top_items": [
+        "Snack Hành Oishi gói35/39g",
+        "Kẹo thập cẩm Oishi 160g/145g",
+        "Snack Big sheet truyền thống 3.2g"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G5-01",
+      "group": "Ungrouped",
+      "query": "coca thường",
+      "notes": "\"Thường\" → full must_not",
+      "expected_type": "exact_match",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "coca"
+      ],
+      "excluded_keywords": [
+        "light",
+        "zero",
+        "không đường"
+      ],
+      "latency_ms": 3861.78,
+      "http_status": 200,
+      "confidence": 0.75,
+      "item_count": 3,
+      "top_items": [
+        "Nước ngọt coca chai 600ml",
+        "Nước giải khát Coca Cola chai 1.5lít",
+        "Nestle Granola d.mạch h.nhân scl 300gT14"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G5-02",
+      "group": "Ungrouped",
+      "query": "2 lon coca bình thường",
+      "notes": "Qty bỏ + variant",
+      "expected_type": "exact_match",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "coca",
+        "lon"
+      ],
+      "excluded_keywords": [
+        "light",
+        "zero",
+        "không đường"
+      ],
+      "latency_ms": 3086.23,
+      "http_status": 200,
+      "confidence": 0.75,
+      "item_count": 3,
+      "top_items": [
+        "Nước giải khát Coca Cola lon 320ml",
+        "Nước giải khát Coca Cola chai 1.5lít",
+        "Nestle Granola d.mạch h.nhân scl 300gT14"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G5-03",
+      "group": "Ungrouped",
+      "query": "bia tiger thường",
+      "notes": "Tiger ≠ Silver/Crystal",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "tiger"
+      ],
+      "excluded_keywords": [
+        "silver",
+        "crystal"
+      ],
+      "latency_ms": 3059.92,
+      "http_status": 200,
+      "confidence": 0.77,
+      "item_count": 3,
+      "top_items": [
+        "TIGER Bia lon 250ml",
+        "Bia lon Tiger cao 330ml",
+        "Bia Tiger lon cao 330ml"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G5-04",
+      "group": "Ungrouped",
+      "query": "sữa tươi nguyên kem",
+      "notes": "Full fat",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "sữa"
+      ],
+      "excluded_keywords": [
+        "tách béo",
+        "ít béo"
+      ],
+      "latency_ms": 2784.83,
+      "http_status": 200,
+      "confidence": 0.77,
+      "item_count": 3,
+      "top_items": [
+        "Sữa tươi tiệt trùng nguyên kem Meadow Fresh hộp 1L",
+        "Bánh ngon Nue vị sữa tươi 33g",
+        "VINAMILK Sữa tươi TT Dừa 180ml"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G5-05",
+      "group": "Ungrouped",
+      "query": "heineken bình thường",
+      "notes": "Heineken ≠ Silver",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "heineken"
+      ],
+      "excluded_keywords": [
+        "silver"
+      ],
+      "latency_ms": 3228.96,
+      "http_status": 200,
+      "confidence": 0.75,
+      "item_count": 3,
+      "top_items": [
+        "Thùng 24 lon bia Heineken 330ml",
+        "Lốc 6 lon Bia Budweiser 500ml",
+        "Lốc 6 lon bia Heineken 330ml"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G5-06",
+      "group": "Ungrouped",
+      "query": "pepsi không zero không light",
+      "notes": "Double negation",
+      "expected_type": "exact_match",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "pepsi"
+      ],
+      "excluded_keywords": [
+        "zero",
+        "không calo",
+        "light"
+      ],
+      "latency_ms": 3498.0,
+      "http_status": 200,
+      "confidence": 0.75,
+      "item_count": 3,
+      "top_items": [
+        "Nước ngọt lon Pepsi 330ml /320ml",
+        "Nước giải khát có gas Pepsico chai 1.5 lít",
+        "Nước uống có gaz AAQUAFINA Soda 320ml"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G5-07",
+      "group": "Ungrouped",
+      "query": "bia sài gòn thường không phải đặc biệt",
+      "notes": "Explicit negation",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "sài gòn"
+      ],
+      "excluded_keywords": [
+        "đặc biệt"
+      ],
+      "latency_ms": 3890.78,
+      "http_status": 200,
+      "confidence": 0.75,
+      "item_count": 3,
+      "top_items": [
+        "Bia Sài Gòn special sleek lon 330ml",
+        "Bia Sapporo lon 650ml",
+        "TIGER Bia lon 250ml"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G6-01",
+      "group": "Ungrouped",
+      "query": "trà bí đao coca la hán quả",
+      "notes": "Brand=FUZETEA, không phải Coca",
+      "expected_type": "needs_clarification",
+      "actual_type": "no_result",
+      "fail_reasons": [],
+      "required_keywords": [
+        "trà"
+      ],
+      "excluded_keywords": [
+        "cola"
+      ],
+      "latency_ms": 6426.12,
+      "http_status": 200,
+      "confidence": 0.72,
+      "item_count": 0,
+      "top_items": [],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G6-02",
+      "group": "Ungrouped",
+      "query": "trà xanh 0 độ",
+      "notes": "Brand '0 Độ' không có trong catalog Winmart",
+      "expected_type": "no_result",
+      "actual_type": "no_result",
+      "fail_reasons": [],
+      "required_keywords": [],
+      "excluded_keywords": [],
+      "latency_ms": 3435.81,
+      "http_status": 200,
+      "confidence": 0.8,
+      "item_count": 0,
+      "top_items": [],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G6-03",
+      "group": "Ungrouped",
+      "query": "nước tăng lực monster",
+      "notes": "Monster có trong catalog",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "monster"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 3520.1,
+      "http_status": 200,
+      "confidence": 0.75,
+      "item_count": 3,
+      "top_items": [
+        "Nước tăng lực Monster lon 355ml",
+        "ZOTT Váng sữa Monte Classic 55g",
+        "SPRITE Nước giải khát 330/320ml T24"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G6-04",
+      "group": "Ungrouped",
+      "query": "sting đỏ",
+      "notes": "\"Đỏ\" = flavor attribute",
+      "expected_type": "needs_clarification",
+      "actual_type": "no_result",
+      "fail_reasons": [],
+      "required_keywords": [
+        "sting"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 2998.59,
+      "http_status": 200,
+      "confidence": 0.85,
+      "item_count": 0,
+      "top_items": [],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G7-01",
+      "group": "Ungrouped",
+      "query": "bia không cồn",
+      "notes": "Bia không cồn không có",
+      "expected_type": "no_result",
+      "actual_type": "no_result",
+      "fail_reasons": [],
+      "required_keywords": [],
+      "excluded_keywords": [],
+      "latency_ms": 2537.65,
+      "http_status": 200,
+      "confidence": 0.8,
+      "item_count": 0,
+      "top_items": [],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G7-02",
+      "group": "Ungrouped",
+      "query": "thuốc cảm",
+      "notes": "Out of scope",
+      "expected_type": "no_result",
+      "actual_type": "no_result",
+      "fail_reasons": [],
+      "required_keywords": [],
+      "excluded_keywords": [],
+      "latency_ms": 2972.05,
+      "http_status": 200,
+      "confidence": 0.72,
+      "item_count": 0,
+      "top_items": [],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G7-03",
+      "group": "Ungrouped",
+      "query": "sữa rửa mặt",
+      "notes": "Có trong catalog",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "sữa rửa mặt"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 2579.56,
+      "http_status": 200,
+      "confidence": 0.76,
+      "item_count": 3,
+      "top_items": [
+        "Sữa rửa mặt sáng da đất sét Nivea tuýp 100g",
+        "Sữa tắm trắng da Gervenne hương nước hoa tươi mát chai 1,2L",
+        "Sữa rửa mặt sạch sâu BIORÉ Men's 100g"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G7-04",
+      "group": "Ungrouped",
+      "query": "lavie có ga",
+      "notes": "LaVie có gas không có",
+      "expected_type": "no_result",
+      "actual_type": "no_result",
+      "fail_reasons": [],
+      "required_keywords": [],
+      "excluded_keywords": [],
+      "latency_ms": 2529.75,
+      "http_status": 200,
+      "confidence": 0.85,
+      "item_count": 0,
+      "top_items": [],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G7-05",
+      "group": "Ungrouped",
+      "query": "sữa ensure",
+      "notes": "Ensure có trong catalog",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "ensure"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 3988.86,
+      "http_status": 200,
+      "confidence": 0.52,
+      "item_count": 3,
+      "top_items": [
+        "ENSURE Gold hương cà phê 800g",
+        "Sữa tươi tiệt trùng Vinamilk có đường hộp 1 lít",
+        "Sữa bột Abbott PediaSure BA hương vani 1,6kg"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G7-06",
+      "group": "Ungrouped",
+      "query": "bia 0 độ",
+      "notes": "Bia không cồn variant",
+      "expected_type": "no_result",
+      "actual_type": "no_result",
+      "fail_reasons": [],
+      "required_keywords": [],
+      "excluded_keywords": [],
+      "latency_ms": 4107.56,
+      "http_status": 200,
+      "confidence": 0.8,
+      "item_count": 0,
+      "top_items": [],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G7-07",
+      "group": "Ungrouped",
+      "query": "nước tăng lực không đường",
+      "notes": "Variant không tồn tại",
+      "expected_type": "no_result",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [
+        "expected no_result (out-of-catalog) but system returned needs_clarification with 3 items — hallucination"
+      ],
+      "required_keywords": [],
+      "excluded_keywords": [],
+      "latency_ms": 2727.3,
+      "http_status": 200,
+      "confidence": 0.75,
+      "item_count": 3,
+      "top_items": [
+        "Lốc 6 lon nước giải khát Zero Coca Cola không đường 330ml",
+        "Nước giải khát vị cam cực mạnh Mirinda chai 1.5L",
+        "Nước uống có gaz AAQUAFINA Soda 320ml"
+      ],
+      "error": "",
+      "pass": false
+    },
+    {
+      "id": "G8-01",
+      "group": "Ungrouped",
+      "query": "lấy cho tôi 1 thùng heineken",
+      "notes": "Câu lịch sự + filler",
+      "expected_type": "exact_match",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "heineken",
+        "thùng"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 2890.24,
+      "http_status": 200,
+      "confidence": 0.77,
+      "item_count": 3,
+      "top_items": [
+        "Bia Heineken lon 330ml",
+        "Thùng 24 chai bia Corona Extra 355ml/330ml",
+        "Bia Heineken 0.0 Sleek 330ml"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G8-02",
+      "group": "Ungrouped",
+      "query": "2 lon coca với 3 gói mì",
+      "notes": "Multi-item — clarify",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [],
+      "excluded_keywords": [],
+      "latency_ms": 3869.58,
+      "http_status": 200,
+      "confidence": 0.75,
+      "item_count": 3,
+      "top_items": [
+        "Nước giải khát Coca Cola lon 320ml",
+        "Nước giải khát Coca Cola chai 1.5lít",
+        "Kẹo dẻo Playmore cuộn vị cola 21g"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G8-03",
+      "group": "Ungrouped",
+      "query": "mì cay hảo hảo",
+      "notes": "Flavor + brand",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "hảo hảo"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 3716.2,
+      "http_status": 200,
+      "confidence": 0.83,
+      "item_count": 3,
+      "top_items": [
+        "HẢO HẢO Mì xào hương vị hải sản 72g",
+        "SAMYANG Mì khô gà cay hoa hồng 140g",
+        "Mì Koreno jumbo hải sản túi 1kg"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G8-04",
+      "group": "Ungrouped",
+      "query": "cho tôi hộp sữa nhỏ vinamilk",
+      "notes": "Câu nhờ + size_hint",
+      "expected_type": "exact_match",
+      "actual_type": "no_result",
+      "fail_reasons": [],
+      "required_keywords": [
+        "vinamilk",
+        "hộp"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 3060.76,
+      "http_status": 200,
+      "confidence": 0.8,
+      "item_count": 0,
+      "top_items": [],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G8-05",
+      "group": "Ungrouped",
+      "query": "mua bia heineken nhưng không lấy loại bạc",
+      "notes": "NL + variant negation",
+      "expected_type": "exact_match",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "heineken"
+      ],
+      "excluded_keywords": [
+        "silver",
+        "bạc"
+      ],
+      "latency_ms": 2903.84,
+      "http_status": 200,
+      "confidence": 0.75,
+      "item_count": 3,
+      "top_items": [
+        "Thùng 24 lon bia Heineken 330ml",
+        "Bia Budweiser lon 500ml",
+        "Lốc 6 lon bia Heineken 330ml"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G8-06",
+      "group": "Ungrouped",
+      "query": "đặt giúp tôi vài lon pepsi loại thường",
+      "notes": "Filler + variant",
+      "expected_type": "exact_match",
+      "actual_type": "exact_match",
+      "fail_reasons": [],
+      "required_keywords": [
+        "pepsi",
+        "lon"
+      ],
+      "excluded_keywords": [
+        "không calo",
+        "light"
+      ],
+      "latency_ms": 3181.33,
+      "http_status": 200,
+      "confidence": 0.98,
+      "item_count": 1,
+      "top_items": [
+        "Nước ngọt lon Pepsi 330ml /320ml"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G8-07",
+      "group": "Ungrouped",
+      "query": "sữa tươi không đường vinamilk hộp lớn",
+      "notes": "Multi-constraint",
+      "expected_type": "exact_match",
+      "actual_type": "exact_match",
+      "fail_reasons": [],
+      "required_keywords": [
+        "vinamilk",
+        "hộp"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 16762.82,
+      "http_status": 200,
+      "confidence": 0.96,
+      "item_count": 1,
+      "top_items": [
+        "Sữa tươi tiệt trùng Vinamilk không đường hộp 1 lít"
+      ],
+      "error": "",
+      "pass": true
+    },
+    {
+      "id": "G8-08",
+      "group": "Ungrouped",
+      "query": "bia gì uống cho mát hả",
+      "notes": "Câu hỏi không brand/size",
+      "expected_type": "needs_clarification",
+      "actual_type": "needs_clarification",
+      "fail_reasons": [],
+      "required_keywords": [
+        "bia"
+      ],
+      "excluded_keywords": [],
+      "latency_ms": 3183.0,
+      "http_status": 200,
+      "confidence": 0.75,
+      "item_count": 3,
+      "top_items": [
+        "BIA SÀI GÒN Bia Export premium lon330ml",
+        "Bia Sapporo lon 650ml",
+        "BIA LẠC VIỆT Bia lon sleek 330ml"
+      ],
+      "error": "",
+      "pass": true
+    }
+  ]
+}

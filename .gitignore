@@ -3,3 +3,7 @@ __pycache__/
 .pytest_cache/
 *.pyc
 .env
+
+# Blind test set — niêm phong, không commit ground truth công khai
+# Chỉ commit khi repo này là private và team đã đồng ý
+# tests/blind/blind_set.jsonl

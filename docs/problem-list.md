@@ -162,4 +162,53 @@ StructuralScorer quyết định ranking.
 
 ---
 
-*Cập nhật: 2026-05-22.*
+---
+
+### PROB-022 — UOM=thùng không filter ra sản phẩm thùng
+
+**Nguyên tắc:** P1.
+
+**Mô tả:** Các query có `uom=thùng` rõ ràng (`heineken thùng`, `2 thùng bia heineken`,
+`thùng 24 lon tiger`) đều trả về items không có dạng thùng trong top-3. Catalog có sản
+phẩm thùng (`10012012T24`, `10170930T24`), nhưng pipeline không filter/boost đúng.
+Xác nhận: G2-04, G3-02, G3-07 FAIL vì `required 'thùng' not in top results`.
+
+Root cause có thể là một trong ba: (a) extractor không bóc `uom=thung` từ "thùng";
+(b) query builder không dùng uom để filter/boost ES; (c) ranker không penalize sản
+phẩm không có uom khớp. Cần trace extraction log để xác định.
+
+**Phạm vi:**
+- `app/prompts/extraction_v1.yaml` — verify `thùng` → `uom: thung` đúng.
+- `app/services/query_builder.py` — uom phải là filter hoặc strong boost, không bỏ qua.
+- `app/services/ranker/constraint_audit.py` — audit phải penalize sản phẩm sai uom khi uom được extract.
+
+---
+
+## P0 — Eval Infrastructure
+
+### PROB-023 — `eval_gate.py` Decision Type Accuracy luôn báo ~0.094 (bug)
+
+**Nguyên tắc:** P0 — metric sai làm mọi quyết định đều sai.
+
+**Mô tả:** `compute_mft_metrics` so sánh `expected_type` với string `"exact"` và `"clarify"`:
+```python
+elif expected in ("exact", "clarify"):
+```
+Nhưng benchmark.py ghi `expected_type` vào JSON là `"exact_match"` và
+`"needs_clarification"` — không bao giờ khớp. Chỉ nhánh `no_result` chạy → DTA = 5/53
+= 0.094 bất kể pipeline tốt hay xấu.
+
+Giá trị thực (nếu fix): cần tính lại — 27/53 type-match trong benchmark JSON là điểm
+khởi đầu, nhưng đó là logic lỏng (benchmark cho PASS khi type mismatch nếu items đúng).
+Sau khi fix eval_gate, DTA thực có thể thấp hơn 0.51 vì nhiều case G1-G3 pipeline trả
+`no_result` dù expected `needs_clarification`.
+
+**Phạm vi:**
+- `scripts/eval_gate.py` — đổi `expected in ("exact", "clarify")` →
+  `expected in ("exact", "clarify", "exact_match", "needs_clarification")`, và map
+  `clarify` → match cả `needs_clarification`.
+- Re-run eval_gate sau fix để có DTA thực.
+
+---
+
+*Cập nhật: 2026-06-08.*

@@ -1,0 +1,33 @@
+[
+  {
+    "run_id": "2026-06-08_10-52-42",
+    "test_cases_file": "/home/mbw1/Dev/order-ai/scripts/test_cases.md",
+    "score_pct": 0.0,
+    "pass": 0,
+    "fail": 53,
+    "total": 53,
+    "avg_latency_ms": 395.8,
+    "avg_confidence": 0.0,
+    "failure_reasons": {
+      "http_status=N error=Internal Server Error": 53
+    },
+    "json_report": "2026-06-08_10-52-42_score-0pct.json",
+    "md_report": "2026-06-08_10-52-42_score-0pct.md"
+  },
+  {
+    "run_id": "2026-06-08_10-57-24",
+    "test_cases_file": "/home/mbw1/Dev/order-ai/scripts/test_cases.md",
+    "score_pct": 88.68,
+    "pass": 47,
+    "fail": 6,
+    "total": 53,
+    "avg_latency_ms": 3782.26,
+    "avg_confidence": 0.772,
+    "failure_reasons": {
+      "required '?' not in top results — system returned wrong items": 3,
+      "expected no_result (out-of-catalog) but system returned needs_clarification with 3 items — hallucination": 3
+    },
+    "json_report": "2026-06-08_10-57-24_score-89pct.json",
+    "md_report": "2026-06-08_10-57-24_score-89pct.md"
+  }
+]
